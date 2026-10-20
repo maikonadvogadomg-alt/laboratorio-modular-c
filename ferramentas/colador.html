@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1220">
+<title>Colador de Links</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAFFElEQVR4nO3dsW4cVwyF4XGQNk2eIA/m1n0eJb1bP2iKCywGFmxIOkPykPy/yoUBzeX+5uxK3tWXv/7+5wI+64/qC0BvBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkf1ZfgIvv/3390N//9u+PoCvp5cvOtzZ/NJf32JnUooAiovmVPTENDygzml+ZHdPMgBy6eWtkSdMC8kznblhGcwLyT+duTEYTAuqVzt2AjHoH1Dedu9YZdQ1oRjp3TTPqF9C8dO7aZdTsZ2Gz67kaHrDNBmo3WVGXVdRjA22r5+pz5AYBdRnl41oc3PoW1mKCCZxvZ74biHpenEdhGpDzyErYDsQxINth1fIci11AnmMyYTgcr4AMB+TGbURGAbmNxpbVoFwCshqKP59xWQTkM45GTIZWH5DJIDpyGF1xQA4jaK18gJUBlR9+htox1t/C0FpZQKyfBxUOsyYg6nlc1UgLAqKeICWD5TkQJNkBsX5C5Y83NSDqSZA8ZG5hkOQFxPpJkzlqNhAkSQGxfpKlDZwNBElGQKyfEjljZwNBEh4Q66dQwvDZQJDEBsT6KRf9ELCBIAkMiPVjIvSBYANBQkCQRAXE/ctK3MPBBoKEgCAhIEhCAuIJkKGgB4UNBAkBQZL3a7/zP+zY6k469fjPf9D4T9ft8CHZhSW5Hf/x6wncQA6zO86VJGe05PhRz4F8xveSeUl7jh8SkOH4jpwLW3V861+2EiT0XmZbT5CNL+PjHuNt9Vw7A7piHumF9VyZ3we6cl8HGT6cI4+f9Byo6jsxv5/jg1eV9oU+JCGj4e9Mdfhm9Ozjz39jYe0FjD/+0ifRx1Mb3vD5VpoVbyysuowNx1+9gaAjIEgICBICgiQ2IJOXJ1WXseH4qzfQUy9PTF5tlQgPqPxfYe0FjD9+xgYqHGL541d7DQlfOvU/lFn9OPrxi8n/ir+RVm3qf+dw2AeFRh5/6ZPoiGWw86n0xoDiHumFDT0fkPkQoy/P/PiP2/XpHDkXtur4iz7iLvOS9hw/5GV86JuxP4H3xp8/RFxM+Mv40Kt/55cuNP74ed8Hcng4C009/saX8XjQrg9X2KzTp3NgDwKChIAgWfQJZZvFPRxsIEgICJLAgLiLmeBdGfC14n1hm014VwYGm/++sM2GfMQdBhv+xsLNcsbOBoIkKSCWULK0gbOBIMkLiCWUJnPUbCBIUgNiCSVIHnL2BqKhUPnj5RYGSUFALKEgJYOt2UA09LiqkZbdwmjoQYXD5DkQJJUBsYQeUTvG4g1EQ6LyAdbfwspH0JfD6OoDujwG0Y7J0CwCumzG0YXPuFwCupyGYs5qUEYBXWaj8eQ2Iq+ALr8BWTEcjl1Al+WYHHiOxTGgy3VYhWwHYhrQZTyyfM6jSP19YZ8z9QNy38M5ncN3A734DzFIi4M3COhqMspndTlyg1vY3YbbWZd0jh4b6KXXcD+h3QGbbaCXeauoXTpH14COGRk1TefoHdDRN6PW6RwTAjp6ZTQgnWNOQId/RmPSOaYFdHhmNCydY2ZALw4ljezmZXhAd5kxzY7mblFAdxEx7YnmbmlAb300qZ25vEVAkDT7WRjcEBAkBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQ/A+PQJO1X9HFPgAAAABJRU5ErkJggg==">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAFFElEQVR4nO3dsW4cVwyF4XGQNk2eIA/m1n0eJb1bP2iKCywGFmxIOkPykPy/yoUBzeX+5uxK3tWXv/7+5wI+64/qC0BvBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkf1ZfgIvv/3390N//9u+PoCvp5cvOtzZ/NJf32JnUooAiovmVPTENDygzml+ZHdPMgBy6eWtkSdMC8kznblhGcwLyT+duTEYTAuqVzt2AjHoH1Dedu9YZdQ1oRjp3TTPqF9C8dO7aZdTsZ2Gz67kaHrDNBmo3WVGXVdRjA22r5+pz5AYBdRnl41oc3PoW1mKCCZxvZ74biHpenEdhGpDzyErYDsQxINth1fIci11AnmMyYTgcr4AMB+TGbURGAbmNxpbVoFwCshqKP59xWQTkM45GTIZWH5DJIDpyGF1xQA4jaK18gJUBlR9+htox1t/C0FpZQKyfBxUOsyYg6nlc1UgLAqKeICWD5TkQJNkBsX5C5Y83NSDqSZA8ZG5hkOQFxPpJkzlqNhAkSQGxfpKlDZwNBElGQKyfEjljZwNBEh4Q66dQwvDZQJDEBsT6KRf9ELCBIAkMiPVjIvSBYANBQkCQRAXE/ctK3MPBBoKEgCAhIEhCAuIJkKGgB4UNBAkBQZL3a7/zP+zY6k469fjPf9D4T9ft8CHZhSW5Hf/x6wncQA6zO86VJGe05PhRz4F8xveSeUl7jh8SkOH4jpwLW3V861+2EiT0XmZbT5CNL+PjHuNt9Vw7A7piHumF9VyZ3we6cl8HGT6cI4+f9Byo6jsxv5/jg1eV9oU+JCGj4e9Mdfhm9Ozjz39jYe0FjD/+0ifRx1Mb3vD5VpoVbyysuowNx1+9gaAjIEgICBICgiQ2IJOXJ1WXseH4qzfQUy9PTF5tlQgPqPxfYe0FjD9+xgYqHGL541d7DQlfOvU/lFn9OPrxi8n/ir+RVm3qf+dw2AeFRh5/6ZPoiGWw86n0xoDiHumFDT0fkPkQoy/P/PiP2/XpHDkXtur4iz7iLvOS9hw/5GV86JuxP4H3xp8/RFxM+Mv40Kt/55cuNP74ed8Hcng4C009/saX8XjQrg9X2KzTp3NgDwKChIAgWfQJZZvFPRxsIEgICJLAgLiLmeBdGfC14n1hm014VwYGm/++sM2GfMQdBhv+xsLNcsbOBoIkKSCWULK0gbOBIMkLiCWUJnPUbCBIUgNiCSVIHnL2BqKhUPnj5RYGSUFALKEgJYOt2UA09LiqkZbdwmjoQYXD5DkQJJUBsYQeUTvG4g1EQ6LyAdbfwspH0JfD6OoDujwG0Y7J0CwCumzG0YXPuFwCupyGYs5qUEYBXWaj8eQ2Iq+ALr8BWTEcjl1Al+WYHHiOxTGgy3VYhWwHYhrQZTyyfM6jSP19YZ8z9QNy38M5ncN3A734DzFIi4M3COhqMspndTlyg1vY3YbbWZd0jh4b6KXXcD+h3QGbbaCXeauoXTpH14COGRk1TefoHdDRN6PW6RwTAjp6ZTQgnWNOQId/RmPSOaYFdHhmNCydY2ZALw4ljezmZXhAd5kxzY7mblFAdxEx7YnmbmlAb300qZ25vEVAkDT7WRjcEBAkBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQ/A+PQJO1X9HFPgAAAABJRU5ErkJggg==">
+<style>/* css/app.css */
+/* Colador de Links — tema escuro com dourado (igual ao "Ger. 1") */
+:root {
+  --fundo: #0b101d; --cartao: #151b2e; --item: #1b2238; --linha: #2c3550;
+  --txt: #e8eaf2; --mut: #9aa3b8; --ouro1: #a8a27c; --ouro2: #857a5b; --ouro-txt: #17140b;
+  --verde: #4ade80; --perigo: #f87171; --perigo-fundo: #3b2230;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--fundo); color: var(--txt); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; display: flex; flex-direction: column; overflow: hidden; }
+button { font: inherit; color: inherit; cursor: pointer; }
+input, textarea { font: inherit; color: var(--txt); background: #0f1526; border: 1px solid var(--linha); border-radius: 10px; padding: 12px; width: 100%; }
+input:focus, textarea:focus { outline: 2px solid var(--ouro1); border-color: transparent; }
+button:focus-visible { outline: 2px solid var(--ouro1); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+/* abas */
+#abas { display: flex; align-items: center; gap: 6px; padding: 8px 8px calc(8px); padding-top: calc(8px + env(safe-area-inset-top, 0px)); background: #0a0e1a; border-bottom: 2px solid #3a3526; flex: none; }
+.aba-menu { background: none; border: 0; font-size: 22px; padding: 4px 6px; flex: none; }
+.abas-lista { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; flex: 1; min-width: 0; }
+.abas-lista::-webkit-scrollbar { display: none; }
+.aba { flex: none; background: #161c30; border: 1px solid var(--linha); border-radius: 10px; padding: 9px 14px; font-weight: 600; font-size: 15px; color: #c9cee0; white-space: nowrap; }
+.aba.ativa { background: linear-gradient(135deg, var(--ouro1), var(--ouro2)); color: var(--ouro-txt); border-color: #d6cfa3; }
+.aba.viva:not(.ativa) { box-shadow: inset 0 -3px 0 var(--verde); }
+
+/* palco */
+#palco { flex: 1; min-height: 0; position: relative; }
+.tela { position: absolute; inset: 0; overflow-y: auto; padding: 16px; }
+#quadros-abas, .visor-quadros { position: absolute; inset: 0; }
+.visor { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--fundo); }
+.visor-quadros { position: relative; flex: 1; inset: auto; }
+.visor-caixa { position: absolute; inset: 0; }
+.quadro { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
+.visor-topo { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: linear-gradient(135deg, var(--ouro1), var(--ouro2)); color: var(--ouro-txt); flex: none; }
+.visor-titulo { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; }
+.vbtn { background: rgba(0,0,0,.18); border: 0; border-radius: 8px; width: 40px; height: 36px; font-size: 18px; color: inherit; flex: none; }
+body.cheia #abas, body.cheia #rodape { display: none !important; }
+
+/* rodapé */
+#rodape { display: flex; gap: 10px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)); background: #0a0e1a; flex: none; }
+.nav { flex: 1; border: 0; border-radius: 10px; padding: 13px; font-weight: 700; background: var(--ouro1); color: var(--ouro-txt); }
+.nav.forte { background: linear-gradient(135deg, var(--ouro1), var(--ouro2)); }
+.nav:disabled { opacity: .35; }
+
+/* cartão da lista */
+.cartao { max-width: 760px; margin: 0 auto; background: var(--cartao); border: 1px solid var(--linha); border-radius: 18px; overflow: hidden; padding-bottom: 18px; }
+.cartao > *:not(.cab) { margin-left: 18px; margin-right: 18px; }
+.cab { background: linear-gradient(135deg, var(--ouro1), var(--ouro2)); color: var(--ouro-txt); text-align: center; padding: 18px 12px 14px; margin-bottom: 16px; }
+.cab h1 { margin: 0; font-size: 26px; } .cab p { margin: 4px 0 0; font-size: 14px; letter-spacing: .04em; }
+.numeros { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
+.num { background: linear-gradient(135deg, var(--ouro1), var(--ouro2)); color: var(--ouro-txt); border-radius: 12px; text-align: center; padding: 14px 8px; }
+.num b { display: block; font-size: 34px; line-height: 1.1; font-variant-numeric: tabular-nums; } .num span { font-size: 14px; }
+h2 { font-size: 20px; color: #e3dcb4; border-bottom: 2px solid #4a4532; padding-bottom: 8px; margin-top: 22px; }
+.campo { display: grid; gap: 6px; margin-bottom: 12px; } .campo label { color: var(--mut); font-size: 14px; font-weight: 600; }
+.btn { display: block; width: auto; border: 1px solid var(--linha); background: #11172a; border-radius: 10px; padding: 13px; font-weight: 600; margin-top: 10px; }
+.btn.forte { background: linear-gradient(135deg, var(--ouro1), var(--ouro2)); color: var(--ouro-txt); border: 0; }
+.btn.grande { padding: 16px; font-size: 18px; }
+.btn.perigo { background: var(--perigo-fundo); color: var(--perigo); border-color: #5a2b38; }
+.mais { margin-top: 10px; } .mais summary { cursor: pointer; color: var(--mut); padding: 6px 0; } .mais textarea { min-height: 110px; margin-top: 6px; }
+.busca { margin-bottom: 10px; }
+.lista { display: grid; gap: 10px; }
+.item { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 12px; align-items: center; background: var(--item); border-left: 4px solid #6d6650; border-radius: 12px; padding: 12px; }
+.marca input { width: 26px; height: 26px; accent-color: var(--ouro1); padding: 0; }
+.info { min-width: 0; }
+.info .nome { background: none; border: 0; padding: 0; text-align: left; color: var(--verde); font-weight: 700; font-size: 17px; word-break: break-word; }
+.info small { display: block; color: var(--mut); font-size: 13px; word-break: break-all; }
+.bts { grid-column: 2; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+@media (min-width: 640px) { .item { grid-template-columns: auto minmax(0, 1fr) auto; } .bts { grid-column: auto; justify-content: flex-end; } }
+.mini { background: #11172a; border: 1px solid var(--linha); border-radius: 8px; min-width: 38px; height: 38px; }
+.mini:disabled { opacity: .3; }
+.mini.perigo { color: var(--perigo); }
+.remover { background: var(--perigo-fundo); color: var(--perigo); border: 1px solid #5a2b38; border-radius: 8px; padding: 9px 12px; font-weight: 600; }
+.editar { grid-column: 1 / -1; display: grid; gap: 8px; } .e-bts { display: flex; gap: 8px; } .e-bts .btn { margin: 0; }
+.acoes { margin-top: 16px; }
+.mut { color: var(--mut); } .pequeno { font-size: 13px; margin-top: 14px; }
+
+/* janela das abas */
+.janela { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: grid; place-items: center; padding: 16px; z-index: 10; }
+.janela-caixa { width: min(560px, 100%); max-height: 88vh; overflow-y: auto; background: var(--cartao); border: 1px solid var(--linha); border-radius: 16px; padding: 16px; }
+.janela-topo { display: flex; justify-content: space-between; align-items: center; font-size: 18px; margin-bottom: 6px; }
+.janela-topo .vbtn { background: #11172a; color: var(--txt); }
+.linha-aba { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--linha); }
+.la-info small { display: block; color: var(--mut); word-break: break-all; font-size: 12px; } .la-bts { display: flex; gap: 4px; }
+
+.aviso { position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); background: #1f2a44; color: var(--txt); border: 1px solid var(--ouro1); padding: 10px 16px; border-radius: 12px; z-index: 20; max-width: 90vw; text-align: center; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+/* listas (Ger. 1, Ger. 2…) */
+.listas { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 12px; scrollbar-width: none; }
+.lista-chip { flex: none; background: #11172a; border: 1px solid var(--linha); border-radius: 999px; padding: 8px 14px; font-weight: 600; color: #c9cee0; }
+.lista-chip small { opacity: .7; font-weight: 400; }
+.lista-chip.ativa { background: linear-gradient(135deg, var(--ouro1), var(--ouro2)); color: var(--ouro-txt); border-color: #d6cfa3; }
+.lista-chip.mais-lista { padding: 8px 11px; }
+select { font: inherit; color: var(--txt); background: #0f1526; border: 1px solid var(--linha); border-radius: 10px; padding: 11px; width: 100%; }
+
+/* 🧪 Meus Códigos */
+.mono { font: 13px/1.5 ui-monospace, Consolas, monospace; }
+.cod-icone { font-size: 24px; width: 30px; text-align: center; }
+.cod-visor { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--fundo); }
+.cv-bts { display: flex; gap: 6px; padding: 8px; overflow-x: auto; background: #0a0e1a; flex: none; scrollbar-width: none; }
+.mini-t { flex: none; background: #11172a; border: 1px solid var(--linha); border-radius: 8px; padding: 8px 12px; font-weight: 600; }
+.mini-t.ativo { background: linear-gradient(135deg, var(--ouro1), var(--ouro2)); color: var(--ouro-txt); border-color: #d6cfa3; }
+.mini-t.perigo { color: var(--perigo); } .mini-t:disabled { opacity: .35; }
+.cv-corpo { flex: 1; min-height: 0; position: relative; }
+.cv-palco { position: absolute; inset: 0; display: flex; justify-content: center; background: #2a3045; }
+.cv-palco iframe { width: 100%; height: 100%; border: 0; background: #fff; }
+.cv-palco.cel iframe { width: 390px; max-width: 100%; }
+.cv-texto { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 0; resize: none; white-space: pre; tab-size: 2; background: #0a0f1c; }
+
+.aba-visor { border-style: dashed; }
+.abrir-um { background: var(--ouro1) !important; color: var(--ouro-txt) !important; font-weight: 700; }
+
+</style>
+</head>
+<body>
+  <!-- barra de abas: a primeira é sempre a lista de links; as outras são os seus apps fixados -->
+  <header id="abas">
+    <button class="aba-menu" id="btn-abas" title="Arrumar as abas" aria-label="Arrumar as abas">📂</button>
+    <div id="abas-lista" class="abas-lista"></div>
+  </header>
+
+  <main id="palco">
+    <!-- tela da lista de links -->
+    <section id="tela-links" class="tela"></section>
+    <!-- 🧪 Meus Códigos (playground que guarda) -->
+    <section id="tela-codigos" class="tela" hidden></section>
+    <!-- aqui entram os quadros das abas fixadas (ficam vivos ao trocar de aba) -->
+    <div id="quadros-abas"></div>
+    <!-- visor: abre os links marcados, um por vez -->
+    <section id="visor" class="visor" hidden>
+      <div class="visor-topo">
+        <b id="visor-titulo" class="visor-titulo"></b>
+        <button class="vbtn" id="visor-copiar" title="Copiar o endereço">📋</button>
+        <button class="vbtn" id="visor-fora" title="Abrir no navegador">↗</button>
+        <button class="vbtn" id="visor-cheia" title="Tela cheia">⛶</button>
+        <button class="vbtn" id="visor-fechar" title="Fechar">✕</button>
+      </div>
+      <div id="visor-quadros" class="visor-quadros"></div>
+    </section>
+  </main>
+
+  <footer id="rodape" hidden>
+    <button class="nav" id="ant">← Anterior</button>
+    <button class="nav forte" id="prox">Próximo →</button>
+  </footer>
+
+  <!-- janela de arrumar as abas -->
+  <div id="janela" class="janela" hidden>
+    <div class="janela-caixa">
+      <div class="janela-topo"><b>📂 Abas fixadas</b><button class="vbtn" id="janela-fechar">✕</button></div>
+      <p class="mut">Cada aba fica aberta por trás quando você troca: o login, o token e as conversas continuam vivos.</p>
+      <div id="janela-lista"></div>
+      <div class="campo"><label for="nova-aba-nome">Nome curto</label><input id="nova-aba-nome" placeholder="Ex.: Playground"></div>
+      <div class="campo"><label for="nova-aba-url">Endereço</label><input id="nova-aba-url" inputmode="url" placeholder="https://…"></div>
+      <button class="btn forte" id="nova-aba-ok">📌 Fixar como aba</button>
+    </div>
+  </div>
+
+  <div id="aviso" class="aviso" hidden></div>
+
+  <script>
+/* js/00-dados.js */
+/* =========================================================================
+   Colador de Links — 00-dados.js
+   Onde tudo fica guardado (neste aparelho) + backup em arquivo.
+   CL.links  = [{ id, nome, url, marcado }]
+   CL.abas   = [{ id, nome, url }]        (as abas fixadas no topo)
+   ========================================================================= */
+(function (g) {
+  'use strict';
+  const CL = (g.CL = g.CL || {});
+  CL.versao = 'v18/10-b';
+  const K_LINKS = 'colador_links_v1', K_ABAS = 'colador_abas_v1', K_LISTAS = 'colador_listas_v1', K_ATUAL = 'colador_lista_atual';
+
+  // Links que apareciam nos seus prints (já entram na primeira vez)
+  const INICIAIS = [
+    ['1.play', 'https://bucolic-babka-4c12ea.netlify.app/'],
+    ['2.SkTools', 'https://hilarious-profiterole-c0c785.netlify.app/'],
+    ['3.chat', 'https://iridescent-speculoos-1db22c.netlify.app/'],
+    ['4.sk', 'https://phenomenal-caramel-18cdfe.netlify.app/'],
+    ['5', 'https://bejewelled-bienenstitch-3f78dd.netlify.app/'],
+    ['Conversa (Claude)', 'https://claude.ai/share/0f4958a1-a87a-4180-a09a-dd15341a65cd'],
+    ['proj22-pwa', 'https://maikonadvogadomg-alt.github.io/proj22-pwa/index.html'],
+    ['mini6-pwa', 'https://jorgecaldeira62-gif.github.io/mini6-pwa/'],
+    ['Monica 1', 'https://monica.im/share/chat?shareId=nfi0FGbnUIDxyh7O'],
+    ['Monica 2', 'https://monica.im/share/chat?shareId=rjMdNehXJOdwRxoQ'],
+    ['Mini SK', 'https://maikonadvogadomg-alt.github.io/mini-sk/'],
+    ['Caça-Bug 2', 'https://maikonadvogadomg-alt.github.io/caca-bug-2/'],
+    ['Caca1', 'https://maikonadvogadomg-alt.github.io/caca-tudo/'],
+  ];
+
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  function ler(k, padrao) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : padrao; } catch { return padrao; } }
+  function gravar(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { CL.aviso('⚠️ Não consegui guardar (memória cheia?). Faça um backup.'); return false; } }
+
+  CL.links = ler(K_LINKS, null);
+  if (!CL.links) { CL.links = INICIAIS.map(([nome, url]) => ({ id: uid(), nome, url, marcado: true })); gravar(K_LINKS, CL.links); }
+  CL.abas = ler(K_ABAS, []);
+  // várias listas (Ger. 1, Ger. 2, …): cada link pertence a uma
+  CL.listas = ler(K_LISTAS, null) || [{ id: 'l1', nome: 'Ger. 1' }, { id: 'l2', nome: 'Ger. 2' }];
+  CL.links.forEach((l) => { if (!l.lista || !CL.listas.some((x) => x.id === l.lista)) l.lista = CL.listas[0].id; });
+  CL.listaAtual = ler(K_ATUAL, CL.listas[0].id);
+  if (!CL.listas.some((x) => x.id === CL.listaAtual)) CL.listaAtual = CL.listas[0].id;
+
+  CL.salvar = () => { gravar(K_LINKS, CL.links); gravar(K_ABAS, CL.abas); gravar(K_LISTAS, CL.listas); gravar(K_ATUAL, CL.listaAtual); };
+  CL.uid = uid;
+  CL.esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  CL.$ = (s, el) => (el || document).querySelector(s);
+
+  // aceita "site.com" sem https
+  CL.arrumarUrl = (u) => { u = String(u || '').trim(); if (!u) return ''; if (!/^[a-z][\w+.-]*:/i.test(u)) u = 'https://' + u; try { return new URL(u).href; } catch { return ''; } };
+
+  // ── aviso rápido ────────────────────────────────────────────────────────────
+  let t;
+  CL.aviso = (msg) => { const a = document.getElementById('aviso'); if (!a) return; a.textContent = msg; a.hidden = false; clearTimeout(t); t = setTimeout(() => (a.hidden = true), 2600); };
+
+  // ── backup ─────────────────────────────────────────────────────────────────
+  CL.backup = async () => {
+    let codigos = [];
+    try { codigos = CL.codigosDB ? await CL.codigosDB.todos() : []; } catch (e) {}
+    const dados = JSON.stringify({ app: 'colador-de-links', versao: 2, data: new Date().toISOString(), listas: CL.listas, links: CL.links, abas: CL.abas, codigos }, null, 1);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([dados], { type: 'application/json' }));
+    a.download = 'colador-links-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  };
+  // ── copiar e lista em TEXTO (.md): fácil de ler, copiar e colar em qualquer lugar ──
+  CL.copiar = async (texto, msg) => {
+    try { await navigator.clipboard.writeText(texto); }
+    catch { const t = document.createElement('textarea'); t.value = texto; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch {} t.remove(); }
+    CL.aviso(msg || '📋 Copiado.');
+  };
+  CL.textoMD = (soLista) => {
+    const listas = soLista ? CL.listas.filter((x) => x.id === soLista) : CL.listas;
+    let md = '# Meus links — Colador (' + new Date().toLocaleDateString('pt-BR') + ')\n';
+    for (const li of listas) {
+      const ls = CL.links.filter((l) => l.lista === li.id);
+      md += '\n## ' + li.nome + '\n\n' + (ls.length ? ls.map((l) => '- ' + l.nome + ' — ' + l.url).join('\n') : '(vazia)') + '\n';
+    }
+    return md;
+  };
+  CL.baixarMD = () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([CL.textoMD()], { type: 'text/markdown;charset=utf-8' }));
+    a.download = 'meus-links-' + new Date().toISOString().slice(0, 10) + '.md';
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  };
+  // lê um texto/.md: cada "## Nome" vira (ou acha) uma lista; os endereços abaixo entram nela
+  CL.importarTexto = (texto) => {
+    const antes = CL.listaAtual; let n = 0;
+    const partes = String(texto || '').split(/^##\s+/m);
+    if (partes.length < 2) return CL.colarVarios(texto);
+    n += CL.colarVarios(partes[0]);
+    for (const p of partes.slice(1)) {
+      const nome = p.split('\n')[0].trim().slice(0, 24) || 'Lista';
+      let li = CL.listas.find((x) => x.nome.toLowerCase() === nome.toLowerCase());
+      if (!li) { li = { id: uid(), nome }; CL.listas.push(li); }
+      CL.listaAtual = li.id;
+      n += CL.colarVarios(p.slice(p.indexOf('\n') + 1));
+    }
+    CL.listaAtual = antes; CL.salvar();
+    return n;
+  };
+  CL.restaurar = async (arquivo) => {
+    const texto = await arquivo.text();
+    let j; try { j = JSON.parse(texto); } catch { return CL.importarTexto(texto); }
+    if (!Array.isArray(j.links)) throw new Error('Este arquivo não é um backup do Colador.');
+    for (const li of j.listas || []) if (!CL.listas.some((x) => x.id === li.id)) CL.listas.push({ id: li.id, nome: li.nome });
+    const ja = new Set(CL.links.map((l) => (l.lista || '') + '|' + l.url));
+    let n = 0;
+    for (const l of j.links) { const lista = CL.listas.some((x) => x.id === l.lista) ? l.lista : CL.listas[0].id; if (l.url && !ja.has(lista + '|' + l.url)) { CL.links.push({ id: uid(), nome: l.nome || l.url, url: l.url, marcado: !!l.marcado, lista }); n++; } }
+    if (Array.isArray(j.codigos) && CL.codigosDB) { const tem = new Set((await CL.codigosDB.todos()).map((c) => c.nome + '|' + c.codigo.length)); for (const c of j.codigos) if (c && c.codigo != null && !tem.has(c.nome + '|' + c.codigo.length)) { await CL.codigosDB.guardar(Object.assign({}, c, { id: uid() })); n++; } }
+    const jaAba = new Set(CL.abas.map((a) => a.url));
+    for (const a of j.abas || []) if (a.url && !jaAba.has(a.url)) CL.abas.push({ id: uid(), nome: a.nome, url: a.url });
+    CL.salvar();
+    return n;
+  };
+  // cola um texto qualquer com vários endereços dentro → vira links
+  CL.colarVarios = (texto) => {
+    const urls = String(texto || '').match(/https?:\/\/[^\s"'<>)]+/g) || [];
+    const ja = new Set(CL.links.filter((l) => l.lista === CL.listaAtual).map((l) => l.url));
+    let n = 0;
+    // tenta aproveitar o texto antes do endereço na mesma linha como nome (ex.: "Chat 1 - https://…")
+    const linhas = String(texto || '').split(/\n/);
+    const nomeDe = (url) => { const ln = linhas.find((x) => x.includes(url)); const antes = ln ? ln.slice(0, ln.indexOf(url)).replace(/^[\s>*•+-]+/, '').replace(/[\[\]()*_`]/g, '').replace(/[-:–—|•\s]+$/, '').trim() : ''; return antes && antes.length <= 40 ? antes : new URL(url).hostname.split('.')[0]; };
+    for (const u of urls) { const url = CL.arrumarUrl(u.replace(/[.,;]+$/, '')); if (url && !ja.has(url)) { ja.add(url); CL.links.push({ id: uid(), nome: nomeDe(u.replace(/[.,;]+$/, '')), url, marcado: true, lista: CL.listaAtual }); n++; } }
+    CL.salvar();
+    return n;
+  };
+})(window);
+
+</script>
+  <script>
+/* js/10-abas.js */
+/* =========================================================================
+   Colador de Links — 10-abas.js
+   Barra de abas do topo. A 1ª é sempre "🔗 Links". As outras são apps
+   fixados: cada um abre num quadro que NÃO é apagado ao trocar de aba —
+   por isso o login, o token e as conversas continuam vivos.
+   ========================================================================= */
+(function (CL) {
+  'use strict';
+  const $ = CL.$;
+  let atual = 'links';
+  const vivos = new Map(); // id da aba → <iframe>
+
+  function pintar() {
+    const lista = $('#abas-lista');
+    lista.innerHTML = '<button class="aba' + (atual === 'links' ? ' ativa' : '') + '" data-aba="links">🔗 Links</button>' +
+      '<button class="aba' + (atual === 'codigos' ? ' ativa' : '') + '" data-aba="codigos">🧪 Códigos</button>' +
+      // um "▶" para cada lista com visor aberto (Ger. 1, Ger. 2…): troca entre eles sem perder onde estava
+      CL.visor.abertos.map((id) => '<button class="aba aba-visor viva' + (atual === 'visor:' + id ? ' ativa' : '') + '" data-aba="visor:' + id + '">▶ ' + CL.esc((CL.listas.find((x) => x.id === id) || {}).nome || 'Lista') + '</button>').join('') +
+      CL.abas.map((a) => '<button class="aba' + (atual === a.id ? ' ativa' : '') + (vivos.has(a.id) ? ' viva' : '') + '" data-aba="' + a.id + '" title="' + CL.esc(a.url) + '">' + CL.esc(a.nome) + '</button>').join('');
+    const ativa = lista.querySelector('.ativa'); if (ativa) ativa.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+  }
+
+  function ir(id) {
+    const ehVisor = String(id).startsWith('visor:') && CL.visor.ver(id.slice(6));
+    if (String(id).startsWith('visor:') && !ehVisor) id = 'links';
+    atual = id;
+    const ehLinks = id === 'links', ehCod = id === 'codigos';
+    $('#tela-codigos').hidden = !ehCod;
+    $('#tela-links').hidden = !ehLinks;
+    $('#visor').hidden = !ehVisor;
+    $('#rodape').hidden = !ehVisor;
+    $('#quadros-abas').hidden = ehLinks || ehCod || ehVisor;
+    vivos.forEach((f, k) => (f.hidden = k !== id));
+    if (!ehLinks && !ehCod && !ehVisor) {
+      const a = CL.abas.find((x) => x.id === id);
+      if (a && !vivos.has(id)) {
+        const f = document.createElement('iframe');
+        f.className = 'quadro';
+        f.src = a.url;
+        f.setAttribute('allow', 'clipboard-read; clipboard-write; microphone; camera; fullscreen; autoplay');
+        f.setAttribute('allowfullscreen', '');
+        f.title = a.nome;
+        $('#quadros-abas').appendChild(f);
+        vivos.set(id, f);
+      }
+    }
+    pintar();
+  }
+
+  function fixar(nome, url) {
+    url = CL.arrumarUrl(url);
+    if (!url) { CL.aviso('Endereço inválido.'); return null; }
+    if (CL.abas.some((a) => a.url === url)) { CL.aviso('Esse já é uma aba.'); return null; }
+    const a = { id: CL.uid(), nome: (nome || new URL(url).hostname.split('.')[0]).slice(0, 18), url };
+    CL.abas.push(a); CL.salvar(); pintar(); pintarJanela();
+    CL.aviso('📌 Fixado como aba: ' + a.nome);
+    return a;
+  }
+  function tirar(id) {
+    CL.abas = CL.abas.filter((a) => a.id !== id);
+    const f = vivos.get(id); if (f) { f.remove(); vivos.delete(id); }
+    CL.salvar(); if (atual === id) ir('links'); else pintar(); pintarJanela();
+  }
+  function mover(id, d) {
+    const i = CL.abas.findIndex((a) => a.id === id), j = i + d;
+    if (i < 0 || j < 0 || j >= CL.abas.length) return;
+    [CL.abas[i], CL.abas[j]] = [CL.abas[j], CL.abas[i]]; CL.salvar(); pintar(); pintarJanela();
+  }
+  function recarregar(id) { const f = vivos.get(id); if (f) { const u = f.src; f.src = 'about:blank'; setTimeout(() => (f.src = u), 50); } }
+
+  function pintarJanela() {
+    const el = $('#janela-lista');
+    el.innerHTML = CL.abas.length ? CL.abas.map((a, i) =>
+      '<div class="linha-aba"><div class="la-info"><b>' + CL.esc(a.nome) + '</b><small>' + CL.esc(a.url) + '</small></div>' +
+      '<div class="la-bts"><button class="mini" data-sobe="' + a.id + '"' + (i ? '' : ' disabled') + '>↑</button><button class="mini" data-desce="' + a.id + '"' + (i < CL.abas.length - 1 ? '' : ' disabled') + '>↓</button>' +
+      '<button class="mini" data-recarregar="' + a.id + '" title="Recarregar">⟳</button><button class="mini perigo" data-tirar="' + a.id + '" title="Tirar">✕</button></div></div>').join('') : '<p class="mut">Nenhuma aba fixada ainda. Na lista de links, toque em 📌 num link, ou escreva abaixo.</p>';
+  }
+
+  function iniciar() {
+    $('#abas-lista').addEventListener('click', (e) => { const b = e.target.closest('[data-aba]'); if (b) ir(b.dataset.aba); });
+    $('#btn-abas').onclick = () => { pintarJanela(); $('#janela').hidden = false; };
+    $('#janela-fechar').onclick = () => ($('#janela').hidden = true);
+    $('#janela').addEventListener('click', (e) => {
+      if (e.target.id === 'janela') { $('#janela').hidden = true; return; }
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.sobe) mover(b.dataset.sobe, -1);
+      if (b.dataset.desce) mover(b.dataset.desce, 1);
+      if (b.dataset.tirar) tirar(b.dataset.tirar);
+      if (b.dataset.recarregar) { recarregar(b.dataset.recarregar); CL.aviso('Recarregado.'); }
+    });
+    $('#nova-aba-ok').onclick = () => { if (fixar($('#nova-aba-nome').value.trim(), $('#nova-aba-url').value)) { $('#nova-aba-nome').value = ''; $('#nova-aba-url').value = ''; } };
+    pintar();
+  }
+
+  CL.abasUI = { iniciar, ir, fixar, pintar, get atual() { return atual; } };
+})(window.CL);
+
+</script>
+  <script>
+/* js/20-links.js */
+/* =========================================================================
+   Colador de Links — 20-links.js
+   A lista: guardar (nome + endereço), marcar, remover, fixar como aba,
+   colar vários de uma vez, backup. "🚀 Abrir Selecionados" abre o visor.
+   ========================================================================= */
+(function (CL) {
+  'use strict';
+  const $ = CL.$;
+  let filtro = '';
+
+  function montar() {
+    const el = $('#tela-links');
+    el.innerHTML =
+      '<div class="cartao">' +
+      '  <div class="cab"><h1>🔗 Colador de Links</h1><p>Guarde os endereços dos seus apps e abra aqui dentro</p></div>' +
+      '  <div class="listas" id="l-listas"></div>' +
+      '  <div class="numeros"><div class="num"><b id="n-total">0</b><span>Total de links</span></div><div class="num"><b id="n-marc">0</b><span>Marcados</span></div></div>' +
+      '  <h2>➕ Adicionar link</h2>' +
+      '  <div class="campo"><label for="l-nome">Nome do link</label><input id="l-nome" placeholder="Ex.: Playground, Chat IA…"></div>' +
+      '  <div class="campo"><label for="l-url">Endereço (URL)</label><input id="l-url" inputmode="url" autocapitalize="off" placeholder="https://…"></div>' +
+      '  <button class="btn forte" id="l-salvar">💾 Salvar link</button>' +
+      '  <details class="mais" open><summary>📋 Colar vários de uma vez</summary><textarea id="l-varios" placeholder="Cole aqui um texto com vários endereços (um por linha ou misturados) — eu acho todos. Se tiver um nome antes do endereço na mesma linha (ex.: Chat 1 - https://…), ele vira o nome."></textarea><button class="btn" id="l-varios-ok">Adicionar todos</button></details>' +
+      '  <h2>📋 Seus links</h2>' +
+      '  <input id="l-busca" class="busca" placeholder="🔍 Procurar…" autocapitalize="off">' +
+      '  <div id="l-lista" class="lista"></div>' +
+      '  <div class="acoes">' +
+      '    <button class="btn forte grande" id="l-abrir">🚀 Abrir selecionados</button>' +
+      '    <button class="btn" id="l-todos">✅ Marcar todos</button>' +
+      '    <button class="btn" id="l-nenhum">⬜ Desmarcar</button>' +
+      '    <button class="btn" id="l-backup">💾 Backup (baixar)</button>' +
+      '    <button class="btn" id="l-md">📄 Baixar em texto (.md)</button>' +
+      '    <button class="btn" id="l-copiar">📋 Copiar a lista</button>' +
+      '    <button class="btn" id="l-restaurar">📥 Restaurar (backup .json ou texto .md)</button><input type="file" id="l-arq" accept=".json,.md,.txt,application/json,text/*" hidden>' +
+      '    <button class="btn perigo" id="l-limpar">🗑️ Limpar tudo</button>' +
+      '  </div>' +
+      '  <p class="mut pequeno">Fica guardado neste aparelho. Faça um 💾 Backup de vez em quando: se o celular apagar os dados do navegador, você restaura. · ' + CL.versao + '</p>' +
+      '</div>';
+    $('#l-listas').addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.lista) { CL.listaAtual = b.dataset.lista; CL.salvar(); pintar(); return; }
+      if (b.id === 'l-nova') { const n = prompt('Nome da nova lista:', 'Ger. ' + (CL.listas.length + 1)); if (!n) return; const li = { id: CL.uid(), nome: n.trim().slice(0, 24) }; CL.listas.push(li); CL.listaAtual = li.id; CL.salvar(); pintar(); CL.aviso('Lista criada: ' + li.nome); return; }
+      const atual = CL.listas.find((x) => x.id === CL.listaAtual);
+      if (b.id === 'l-renomear') { const n = prompt('Novo nome da lista:', atual.nome); if (n) { atual.nome = n.trim().slice(0, 24); CL.salvar(); pintar(); } return; }
+      if (b.id === 'l-apagar-lista') {
+        if (CL.listas.length < 2) return CL.aviso('Precisa ter pelo menos uma lista.');
+        const qtd = CL.links.filter((l) => l.lista === atual.id).length;
+        const destino = CL.listas.find((x) => x.id !== atual.id);
+        if (!confirm('Apagar a lista "' + atual.nome + '"?' + (qtd ? '\n\nOs ' + qtd + ' links dela NÃO são apagados: vão para "' + destino.nome + '".' : ''))) return;
+        CL.links.forEach((l) => { if (l.lista === atual.id) l.lista = destino.id; });
+        CL.listas = CL.listas.filter((x) => x !== atual); CL.listaAtual = destino.id; CL.salvar(); pintar();
+      }
+    });
+    $('#l-salvar').onclick = salvar;
+    $('#l-url').addEventListener('keydown', (e) => { if (e.key === 'Enter') salvar(); });
+    $('#l-varios-ok').onclick = () => { const n = CL.colarVarios($('#l-varios').value); $('#l-varios').value = ''; pintar(); CL.aviso(n ? n + ' link(s) adicionado(s).' : 'Não achei endereço novo nesse texto.'); };
+    $('#l-busca').addEventListener('input', (e) => { filtro = e.target.value.trim().toLowerCase(); pintar(); });
+    $('#l-todos').onclick = () => { daLista().forEach((l) => (l.marcado = true)); CL.salvar(); pintar(); };
+    $('#l-nenhum').onclick = () => { daLista().forEach((l) => (l.marcado = false)); CL.salvar(); pintar(); };
+    $('#l-abrir').onclick = () => { const sel = daLista().filter((l) => l.marcado); if (!sel.length) return CL.aviso('Marque pelo menos um link.'); CL.visor.abrir(sel, 0); };
+    $('#l-backup').onclick = () => CL.backup().then(() => CL.aviso('Backup baixado (todas as listas e os códigos).'));
+    $('#l-md').onclick = () => { CL.baixarMD(); CL.aviso('📄 Lista baixada em texto (todas as listas).'); };
+    $('#l-copiar').onclick = () => CL.copiar(CL.textoMD(CL.listaAtual), '📋 Lista "' + (CL.listas.find((x) => x.id === CL.listaAtual) || {}).nome + '" copiada.');
+    $('#l-restaurar').onclick = () => $('#l-arq').click();
+    $('#l-arq').onchange = async (e) => { const f = e.target.files[0]; e.target.value = ''; if (!f) return; try { const n = await CL.restaurar(f); pintar(); CL.abasUI.pintar(); CL.abasUI.pintar(); CL.aviso('Restaurado: ' + n + ' link(s) novo(s).'); } catch (er) { CL.aviso('❌ ' + er.message); } };
+    $('#l-limpar').onclick = () => {
+      const b = $('#l-limpar');
+      if (b.dataset.certeza) { CL.links = CL.links.filter((l) => l.lista !== CL.listaAtual); CL.salvar(); pintar(); delete b.dataset.certeza; b.textContent = '🗑️ Limpar tudo'; CL.aviso('Lista apagada.'); return; }
+      b.dataset.certeza = '1'; b.textContent = '⚠️ Toque de novo para APAGAR os links desta lista';
+      setTimeout(() => { delete b.dataset.certeza; b.textContent = '🗑️ Limpar tudo'; }, 4000);
+    };
+    $('#l-lista').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-acao]'); if (!b) return;
+      const l = CL.links.find((x) => x.id === b.dataset.id); if (!l) return;
+      const acao = b.dataset.acao;
+      // abre ESTE link, no visor da lista dele; Anterior/Próximo continuam andando pela lista (igual "27/40")
+      if (acao === 'abrir') { const todos = CL.links.filter((x) => x.lista === l.lista); const i = todos.indexOf(l); CL.visor.abrir(todos, Math.max(0, i), l.lista); }
+      if (acao === 'fixar') CL.abasUI.fixar(l.nome, l.url);
+      if (acao === 'remover') {
+        if (b.dataset.certeza) { CL.links = CL.links.filter((x) => x !== l); CL.salvar(); pintar(); return; }
+        b.dataset.certeza = '1'; b.textContent = 'Certeza?'; setTimeout(() => { if (b.isConnected) { delete b.dataset.certeza; b.textContent = 'Remover'; } }, 3000);
+      }
+      if (acao === 'editar') {
+        const card = b.closest('.item');
+        card.innerHTML = '<div class="editar"><input value="' + CL.esc(l.nome) + '" class="e-nome" aria-label="Nome"><input value="' + CL.esc(l.url) + '" class="e-url" aria-label="Endereço" autocapitalize="off"><select class="e-lista" aria-label="Lista">' + CL.listas.map((x) => '<option value="' + x.id + '"' + (x.id === l.lista ? ' selected' : '') + '>Lista: ' + CL.esc(x.nome) + '</option>').join('') + '</select><div class="e-bts"><button class="btn forte" data-acao="gravar" data-id="' + l.id + '">Salvar</button><button class="btn" data-acao="cancelar" data-id="' + l.id + '">Cancelar</button></div></div>';
+      }
+      if (acao === 'gravar') { const card = b.closest('.item'); const url = CL.arrumarUrl(card.querySelector('.e-url').value); if (!url) return CL.aviso('Endereço inválido.'); l.nome = card.querySelector('.e-nome').value.trim() || url; l.url = url; l.lista = card.querySelector('.e-lista').value; CL.salvar(); pintar(); }
+      if (acao === 'cancelar') pintar();
+    });
+    $('#l-lista').addEventListener('change', (e) => { const c = e.target.closest('[data-marca]'); if (!c) return; const l = CL.links.find((x) => x.id === c.dataset.marca); if (l) { l.marcado = c.checked; CL.salvar(); contar(); } });
+    pintar();
+  }
+
+  function salvar() {
+    const url = CL.arrumarUrl($('#l-url').value);
+    if (!url) return CL.aviso('Cole um endereço válido.');
+    if (daLista().some((l) => l.url === url)) return CL.aviso('Esse link já está nesta lista.');
+    const nome = $('#l-nome').value.trim() || new URL(url).hostname.split('.')[0];
+    CL.links.unshift({ id: CL.uid(), nome, url, marcado: true, lista: CL.listaAtual });
+    CL.salvar(); $('#l-nome').value = ''; $('#l-url').value = ''; pintar(); CL.aviso('💾 Salvo: ' + nome);
+  }
+
+  const daLista = () => CL.links.filter((l) => l.lista === CL.listaAtual);
+  function contar() { const d = daLista(); $('#n-total').textContent = d.length; $('#n-marc').textContent = d.filter((l) => l.marcado).length; }
+  function pintarListas() {
+    $('#l-listas').innerHTML = CL.listas.map((x) => '<button class="lista-chip' + (x.id === CL.listaAtual ? ' ativa' : '') + '" data-lista="' + x.id + '">' + CL.esc(x.nome) + ' <small>' + CL.links.filter((l) => l.lista === x.id).length + '</small></button>').join('') +
+      '<button class="lista-chip mais-lista" id="l-nova" title="Nova lista">＋</button><button class="lista-chip mais-lista" id="l-renomear" title="Renomear esta lista">✏️</button><button class="lista-chip mais-lista" id="l-apagar-lista" title="Apagar esta lista">🗑️</button>';
+  }
+
+  function pintar() {
+    pintarListas();
+    const lista = (filtro ? CL.links : daLista()).filter((l) => !filtro || (l.nome + ' ' + l.url).toLowerCase().includes(filtro));
+    $('#l-lista').innerHTML = lista.length ? lista.map((l) =>
+      '<div class="item"><label class="marca"><input type="checkbox" data-marca="' + l.id + '"' + (l.marcado ? ' checked' : '') + ' aria-label="Marcar ' + CL.esc(l.nome) + '"></label>' +
+      '<div class="info"><button class="nome" data-acao="abrir" data-id="' + l.id + '">' + CL.esc(l.nome) + '</button><small>' + CL.esc(l.url) + (filtro ? ' · ' + CL.esc((CL.listas.find((x) => x.id === l.lista) || {}).nome || '') : '') + '</small></div>' +
+      '<div class="bts"><button class="mini abrir-um" data-acao="abrir" data-id="' + l.id + '" title="Abrir este">▶</button><button class="mini" data-acao="fixar" data-id="' + l.id + '" title="Fixar como aba">📌</button><button class="mini" data-acao="editar" data-id="' + l.id + '" title="Editar">✏️</button><button class="remover" data-acao="remover" data-id="' + l.id + '">Remover</button></div></div>').join('')
+      : '<p class="mut">' + (filtro ? 'Nada com "' + CL.esc(filtro) + '".' : 'Nenhum link ainda. Cole o primeiro lá em cima.') + '</p>';
+    contar();
+  }
+
+  CL.linksUI = { montar, pintar };
+})(window.CL);
+
+</script>
+  <script>
+/* js/30-visor.js */
+/* =========================================================================
+   Colador de Links — 30-visor.js
+   VISOR POR LISTA: cada lista (Ger. 1, Ger. 2…) tem o SEU visor, que fica
+   aberto por trás quando você troca. Ex.: no Ger. 1 a conversa da Monica,
+   no Ger. 2 o Mini SK — troca na aba de cima e cada um continua onde estava.
+   Dentro de cada visor: "3/37 - nome", ← Anterior / Próximo →, Tela cheia,
+   Abrir fora, Fechar. Os últimos 5 abertos de cada lista ficam vivos.
+   ========================================================================= */
+(function (CL) {
+  'use strict';
+  const $ = CL.$;
+  const MAX_VIVOS = 5;
+  const visores = new Map();   // id da lista → { lista, pos, caixa, vivos }
+  let atual = null;            // id da lista do visor que está na tela
+
+  function caixaDe(id) {
+    let v = visores.get(id);
+    if (!v) {
+      const caixa = document.createElement('div');
+      caixa.className = 'visor-caixa'; caixa.dataset.lista = id;
+      $('#visor-quadros').appendChild(caixa);
+      v = { lista: [], pos: 0, caixa, vivos: new Map() };
+      visores.set(id, v);
+    }
+    return v;
+  }
+
+  function quadro(v, url) {
+    if (v.vivos.has(url)) { const f = v.vivos.get(url); v.vivos.delete(url); v.vivos.set(url, f); return f; }
+    const f = document.createElement('iframe');
+    f.className = 'quadro';
+    f.src = url;
+    f.setAttribute('allow', 'clipboard-read; clipboard-write; microphone; camera; fullscreen; autoplay');
+    f.setAttribute('allowfullscreen', '');
+    v.caixa.appendChild(f);
+    v.vivos.set(url, f);
+    while (v.vivos.size > MAX_VIVOS) { const [u, velho] = v.vivos.entries().next().value; velho.remove(); v.vivos.delete(u); }
+    return f;
+  }
+
+  const nomeLista = (id) => (CL.listas.find((x) => x.id === id) || {}).nome || 'Lista';
+
+  function mostrar() {
+    const v = visores.get(atual); if (!v) return;
+    visores.forEach((x, k) => (x.caixa.hidden = k !== atual));
+    const l = v.lista[v.pos]; if (!l) return;
+    const f = quadro(v, l.url);
+    v.vivos.forEach((q) => (q.hidden = q !== f));
+    $('#visor-titulo').textContent = nomeLista(atual) + ' · ' + (v.pos + 1) + '/' + v.lista.length + ' - ' + l.nome;
+    $('#ant').disabled = v.pos === 0;
+    $('#prox').disabled = v.pos === v.lista.length - 1;
+  }
+
+  // abre os links "sel" no visor da lista "id" (por padrão, a lista que está aberta na tela de links)
+  function abrir(sel, i, id) {
+    id = id || CL.listaAtual;
+    const v = caixaDe(id);
+    v.lista = sel.slice(); v.pos = i || 0;
+    atual = id;
+    CL.abasUI.ir('visor:' + id);
+  }
+  function fechar(id) {
+    id = id || atual;
+    const v = visores.get(id);
+    if (v) { v.caixa.remove(); visores.delete(id); }
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    document.body.classList.remove('cheia');
+    const outro = [...visores.keys()][0];
+    CL.abasUI.ir(id === atual && outro ? 'visor:' + outro : 'links');
+  }
+  // chamado pela barra de abas quando você toca em "▶ Ger. 1"
+  function ver(id) { if (!visores.has(id)) return false; atual = id; mostrar(); return true; }
+
+  function iniciar() {
+    $('#visor-fechar').onclick = () => fechar();
+    $('#ant').onclick = () => { const v = visores.get(atual); if (v && v.pos > 0) { v.pos--; mostrar(); } };
+    $('#prox').onclick = () => { const v = visores.get(atual); if (v && v.pos < v.lista.length - 1) { v.pos++; mostrar(); } };
+    $('#visor-fora').onclick = () => { const v = visores.get(atual); const l = v && v.lista[v.pos]; if (l) window.open(l.url, '_blank', 'noopener'); };
+    $('#visor-copiar').onclick = () => { const v = visores.get(atual); const l = v && v.lista[v.pos]; if (l) CL.copiar(l.url, 'Endereço copiado.'); };
+    $('#visor-cheia').onclick = () => {
+      const el = document.documentElement;
+      if (document.fullscreenElement || document.body.classList.contains('cheia')) { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); document.body.classList.remove('cheia'); return; }
+      document.body.classList.add('cheia');
+      if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+    };
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) document.body.classList.remove('cheia'); });
+  }
+
+  CL.visor = {
+    iniciar, abrir, fechar, ver,
+    get abertos() { return [...visores.keys()]; },   // listas que têm visor aberto (viram abas "▶")
+    get atual() { return atual; },
+  };
+})(window.CL);
+
+</script>
+  <script>
+/* js/40-codigos.js */
+/* =========================================================================
+   Colador de Links — 40-codigos.js
+   🧪 MEUS CÓDIGOS: um playground que GUARDA.
+   Cole ou importe um código (HTML, JS, texto…), ele fica salvo aqui no aparelho.
+   Para cada código: ▶ Rodar ao vivo (celular ou largo), 📝 ver/mexer no código
+   (abre e fecha), 📋 copiar tudo, ⬇ baixar, ↗ abrir em tela própria, 💾 salvar.
+   Fica no IndexedDB (aguenta códigos grandes). Entra no 💾 Backup da lista.
+   ========================================================================= */
+(function (CL) {
+  'use strict';
+  const $ = CL.$;
+
+  // ── banco (IndexedDB) ──────────────────────────────────────────────────────
+  const abrirDB = () => new Promise((ok, erro) => {
+    const r = indexedDB.open('colador-codigos', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('codigos', { keyPath: 'id' });
+    r.onsuccess = () => ok(r.result); r.onerror = () => erro(r.error);
+  });
+  async function tx(modo, fn) { const db = await abrirDB(); return new Promise((ok, erro) => { const t = db.transaction('codigos', modo); const st = t.objectStore('codigos'); const res = fn(st); t.oncomplete = () => ok(res && res.result !== undefined ? res.result : res); t.onerror = () => erro(t.error); }); }
+  CL.codigosDB = {
+    todos: () => tx('readonly', (st) => st.getAll()),
+    guardar: (c) => tx('readwrite', (st) => st.put(c)),
+    apagar: (id) => tx('readwrite', (st) => st.delete(id)),
+  };
+
+  let lista = [], aberto = null, filtro = '', larguraCel = false, timer = null;
+  const humano = (n) => n < 1024 ? n + ' letras' : (n / 1024).toFixed(1).replace('.', ',') + ' KB';
+  const tipoDe = (nome, cod) => /\.html?$/i.test(nome) || /<(!doctype|html|body|head|div|script|style)\b/i.test(cod) ? 'html' : /\.(m?js|ts|tsx|jsx)$/i.test(nome) ? 'js' : /\.css$/i.test(nome) ? 'css' : /\.md$/i.test(nome) ? 'md' : 'texto';
+  const ICONE = { html: '🌐', js: '⚙️', css: '🎨', md: '📑', texto: '📄' };
+
+  function montar() {
+    const el = $('#tela-codigos');
+    el.innerHTML =
+      '<div class="cartao" id="cod-lista-tela">' +
+      '  <div class="cab"><h1>🧪 Meus Códigos</h1><p>Guarde, rode e copie os seus códigos — aqui mesmo</p></div>' +
+      '  <div class="numeros"><div class="num"><b id="c-total">0</b><span>Códigos guardados</span></div><div class="num"><b id="c-tam">0</b><span>Tamanho total</span></div></div>' +
+      '  <h2>➕ Guardar um código</h2>' +
+      '  <div class="campo"><label for="c-nome">Nome</label><input id="c-nome" placeholder="Ex.: Calculadora de tempo de contribuição"></div>' +
+      '  <div class="campo"><label for="c-cod">Código (cole aqui)</label><textarea id="c-cod" class="mono" rows="6" spellcheck="false" autocapitalize="off" placeholder="Cole o código inteiro aqui (HTML, JS, texto…)"></textarea></div>' +
+      '  <button class="btn forte" id="c-guardar">💾 Guardar código</button>' +
+      '  <button class="btn" id="c-importar">📂 Importar arquivos (pode escolher vários)</button><input type="file" id="c-arq" multiple hidden accept=".html,.htm,.js,.mjs,.ts,.tsx,.jsx,.css,.md,.txt,.json,text/*">' +
+      '  <h2>📚 Guardados</h2>' +
+      '  <input id="c-busca" class="busca" placeholder="🔍 Procurar pelo nome ou por algo DENTRO do código…" autocapitalize="off">' +
+      '  <div id="c-lista" class="lista"></div>' +
+      '  <p class="mut pequeno">Ficam guardados neste aparelho. O 💾 Backup da aba 🔗 Links leva junto todos os códigos.</p>' +
+      '</div>' +
+      '<div id="cod-visor" class="cod-visor" hidden>' +
+      '  <div class="visor-topo"><button class="vbtn" id="cv-voltar" title="Voltar à lista">←</button><b id="cv-nome" class="visor-titulo"></b><button class="vbtn" id="cv-cel" title="Tamanho celular / largo">📱</button><button class="vbtn" id="cv-fora" title="Abrir em tela própria">↗</button></div>' +
+      '  <div class="cv-bts"><button class="mini-t ativo" id="cv-ver-rodar">▶ Rodar</button><button class="mini-t" id="cv-ver-cod">📝 Código</button><button class="mini-t" id="cv-copiar">📋 Copiar</button><button class="mini-t" id="cv-baixar">⬇ Baixar</button><button class="mini-t" id="cv-salvar" disabled>💾 Salvar</button><button class="mini-t" id="cv-renomear">✏️</button><button class="mini-t perigo" id="cv-apagar">🗑️</button></div>' +
+      '  <div class="cv-corpo"><div id="cv-palco" class="cv-palco"><iframe id="cv-frame" title="Código rodando" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-downloads" allow="clipboard-read; clipboard-write; microphone; camera"></iframe></div>' +
+      '  <textarea id="cv-texto" class="cv-texto mono" spellcheck="false" autocapitalize="off" hidden></textarea></div>' +
+      '</div>';
+
+    $('#c-guardar').onclick = async () => {
+      const cod = $('#c-cod').value; if (!cod.trim()) return CL.aviso('Cole um código primeiro.');
+      const nome = $('#c-nome').value.trim() || ((cod.match(/<title[^>]*>([^<]{1,60})/i) || [])[1] || 'Código de ' + new Date().toLocaleDateString('pt-BR')).trim();
+      await CL.codigosDB.guardar({ id: CL.uid(), nome, codigo: cod, tipo: tipoDe(nome, cod), criado: Date.now(), mudado: Date.now() });
+      $('#c-cod').value = ''; $('#c-nome').value = ''; await carregar(); CL.aviso('💾 Guardado: ' + nome);
+    };
+    $('#c-importar').onclick = () => $('#c-arq').click();
+    $('#c-arq').onchange = async (e) => {
+      const fs = [...e.target.files]; e.target.value = ''; let n = 0;
+      for (const f of fs) { try { const cod = await f.text(); await CL.codigosDB.guardar({ id: CL.uid(), nome: f.name, codigo: cod, tipo: tipoDe(f.name, cod), criado: Date.now(), mudado: f.lastModified || Date.now() }); n++; } catch (x) {} }
+      await carregar(); CL.aviso(n + ' código(s) importado(s).');
+    };
+    $('#c-busca').addEventListener('input', (e) => { filtro = e.target.value.trim().toLowerCase(); pintar(); });
+    $('#c-lista').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-c]'); if (!b) return;
+      const c = lista.find((x) => x.id === b.dataset.id); if (!c) return;
+      if (b.dataset.c === 'abrir') abrir(c, 'rodar');
+      if (b.dataset.c === 'codigo') abrir(c, 'cod');
+      if (b.dataset.c === 'copiar') copiar(c.codigo);
+    });
+
+    // visor
+    $('#cv-voltar').onclick = fecharVisor;
+    $('#cv-ver-rodar').onclick = () => modo('rodar');
+    $('#cv-ver-cod').onclick = () => modo('cod');
+    $('#cv-copiar').onclick = () => copiar($('#cv-texto').value);
+    $('#cv-baixar').onclick = () => baixar(aberto.nome, $('#cv-texto').value);
+    $('#cv-cel').onclick = () => { larguraCel = !larguraCel; $('#cv-palco').classList.toggle('cel', larguraCel); $('#cv-cel').textContent = larguraCel ? '💻' : '📱'; };
+    $('#cv-fora').onclick = () => { const u = URL.createObjectURL(new Blob([$('#cv-texto').value], { type: aberto.tipo === 'html' ? 'text/html;charset=utf-8' : 'text/plain;charset=utf-8' })); window.open(u, '_blank'); };
+    $('#cv-texto').addEventListener('input', () => { $('#cv-salvar').disabled = false; clearTimeout(timer); timer = setTimeout(rodar, 700); });
+    $('#cv-texto').addEventListener('keydown', (e) => { if (e.key === 'Tab') { e.preventDefault(); const t = e.target; t.setRangeText('  ', t.selectionStart, t.selectionEnd, 'end'); } });
+    $('#cv-salvar').onclick = async () => { aberto.codigo = $('#cv-texto').value; aberto.mudado = Date.now(); aberto.tipo = tipoDe(aberto.nome, aberto.codigo); await CL.codigosDB.guardar(aberto); $('#cv-salvar').disabled = true; await carregar(); CL.aviso('💾 Mudanças salvas.'); };
+    $('#cv-renomear').onclick = async () => { const n = prompt('Novo nome:', aberto.nome); if (!n) return; aberto.nome = n.trim(); await CL.codigosDB.guardar(aberto); $('#cv-nome').textContent = aberto.nome; await carregar(); };
+    $('#cv-apagar').onclick = async () => { if (!confirm('Apagar "' + aberto.nome + '" dos guardados?\n\n(Dica: faça um 💾 Backup antes, na aba 🔗 Links.)')) return; await CL.codigosDB.apagar(aberto.id); fecharVisor(); await carregar(); CL.aviso('Apagado.'); };
+    carregar();
+  }
+
+  async function carregar() { try { lista = (await CL.codigosDB.todos()).sort((a, b) => (b.mudado || 0) - (a.mudado || 0)); } catch (e) { lista = []; CL.aviso('⚠️ Este navegador não deixou guardar códigos.'); } pintar(); }
+  function pintar() {
+    $('#c-total').textContent = lista.length;
+    $('#c-tam').textContent = humano(lista.reduce((s, c) => s + c.codigo.length, 0));
+    const v = lista.filter((c) => !filtro || c.nome.toLowerCase().includes(filtro) || c.codigo.toLowerCase().includes(filtro));
+    $('#c-lista').innerHTML = v.length ? v.map((c) =>
+      '<div class="item"><div class="marca cod-icone">' + (ICONE[c.tipo] || '📄') + '</div><div class="info"><button class="nome" data-c="abrir" data-id="' + c.id + '">' + CL.esc(c.nome) + '</button><small>' + humano(c.codigo.length) + ' · ' + new Date(c.mudado || c.criado).toLocaleDateString('pt-BR') + (filtro && !c.nome.toLowerCase().includes(filtro) ? ' · achado dentro do código' : '') + '</small></div>' +
+      '<div class="bts">' + (c.tipo === 'html' ? '<button class="mini" data-c="abrir" data-id="' + c.id + '" title="Rodar">▶</button>' : '') + '<button class="mini" data-c="codigo" data-id="' + c.id + '" title="Ver o código">📝</button><button class="mini" data-c="copiar" data-id="' + c.id + '" title="Copiar tudo">📋</button></div></div>').join('')
+      : '<p class="mut">' + (filtro ? 'Nada achado com "' + CL.esc(filtro) + '".' : 'Nenhum código guardado ainda. Cole o primeiro lá em cima, ou 📂 importe arquivos.') + '</p>';
+  }
+
+  function abrir(c, m) {
+    aberto = c;
+    $('#cod-lista-tela').hidden = true; $('#cod-visor').hidden = false;
+    $('#cv-nome').textContent = c.nome; $('#cv-texto').value = c.codigo; $('#cv-salvar').disabled = true;
+    $('#cv-ver-rodar').hidden = c.tipo !== 'html' && c.tipo !== 'js';
+    modo(c.tipo === 'html' || c.tipo === 'js' ? m : 'cod');
+    if (c.tipo === 'html' || c.tipo === 'js') rodar();
+  }
+  function modo(m) {
+    $('#cv-palco').hidden = m !== 'rodar'; $('#cv-texto').hidden = m !== 'cod';
+    $('#cv-ver-rodar').classList.toggle('ativo', m === 'rodar'); $('#cv-ver-cod').classList.toggle('ativo', m === 'cod');
+  }
+  function rodar() {
+    if (!aberto) return; const cod = $('#cv-texto').value;
+    const pag = aberto.tipo === 'js' ? '<!doctype html><meta charset="utf-8"><body><pre id="saida" style="font:14px monospace;white-space:pre-wrap"></pre><script>const __s=document.getElementById("saida");console.log=(...a)=>{__s.textContent+=a.map(x=>typeof x==="object"?JSON.stringify(x,null,1):x).join(" ")+"\\n"};window.onerror=(m)=>{__s.textContent+="❌ "+m+"\\n"};<\/script><script>' + cod.replace(/<\/script/gi, '<\\/script') + '<\/script>' : cod;
+    $('#cv-frame').srcdoc = pag;
+  }
+  function fecharVisor() {
+    if (!$('#cv-salvar').disabled && !confirm('Você mudou o código e não salvou. Sair mesmo assim?')) return;
+    aberto = null; $('#cv-frame').srcdoc = ''; $('#cod-visor').hidden = true; $('#cod-lista-tela').hidden = false;
+  }
+  async function copiar(t) { try { await navigator.clipboard.writeText(t); CL.aviso('📋 Copiado. É só colar onde quiser.'); } catch (e) { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); CL.aviso('📋 Copiado.'); } catch (x) { CL.aviso('Não consegui copiar.'); } ta.remove(); } }
+  function baixar(nome, txt) { const n = /\.[a-z0-9]{1,5}$/i.test(nome) ? nome : nome.replace(/[\\/:*?"<>|]+/g, '-') + (aberto && aberto.tipo === 'html' ? '.html' : '.txt'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain;charset=utf-8' })); a.download = n; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
+
+  CL.codigosUI = { montar, carregar };
+})(window.CL);
+
+</script>
+  <script>
+/* js/99-app.js */
+/* Colador de Links — 99-app.js: liga tudo (por último). */
+(function (CL) {
+  'use strict';
+  CL.linksUI.montar();
+  CL.codigosUI.montar();
+  CL.visor.iniciar();
+  CL.abasUI.iniciar();
+  CL.abasUI.ir('links');
+  // pedir ao navegador para não apagar os dados deste app
+  try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
+})(window.CL);
+
+</script>
+  <script>if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });</script>
+</body>
+</html>

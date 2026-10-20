@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔬 Laboratório</title>
+  <link rel="stylesheet" href="css/00-casca.css">
+<link rel="stylesheet" href="css/02-importar.css">
+<link rel="stylesheet" href="css/03-dependencias.css">
+<link rel="stylesheet" href="css/04-analisar.css">
+<link rel="stylesheet" href="css/05-plano.css">
+<link rel="stylesheet" href="css/06-scripts.css">
+<link rel="stylesheet" href="css/07-terminal.css">
+<link rel="stylesheet" href="css/08-exportar.css">
+<link rel="stylesheet" href="css/09-integracao.css">
+<link rel="stylesheet" href="css/10-celular.css">
+<link rel="stylesheet" href="css/11-lab.css">
+  <!-- PWA:inicio (gerado pelo Mini SK — pode refazer no painel 📱 PWA) -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Laboratorio-c">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <script>
+    if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+      addEventListener('load', function () { navigator.serviceWorker.register('service-worker.js').catch(function (e) { console.warn('Service worker:', e); }); });
+    }
+  </script>
+  <!-- PWA:fim -->
+</head>
+<body>
+<div class="app-loader" id="app-loader">
+  <div class="app-loader-logo">🔬</div>
+  <div class="app-loader-title">Laboratório</div>
+  <div class="app-loader-sub">Carregando módulos...</div>
+  <div class="app-loader-bar">
+    <div class="app-loader-fill"></div>
+  </div>
+</div>
+<div class="toast-stack" id="toast-stack"></div>
+<div id="app">
+
+  <!-- ===== HEADER ===== -->
+  <header id="header">
+    <button id="btn-toggle-sidebar" title="Toggle Sidebar">☰</button>
+    <div class="logo">
+      <div class="icon">🔬</div>
+      Laboratório
+      <span class="sub">v1.0</span>
+    </div>
+    <div class="spacer"></div>
+    <div id="autosave-indicator">
+      <span id="autosave-dot">💾</span>
+      <span id="autosave-text">Pronto</span>
+    </div>
+    <div class="status-bar">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">Nenhum projeto carregado</span>
+    </div>
+  </header>
+
+  <!-- ===== SIDEBAR ===== -->
+  <nav id="sidebar">
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Projeto</div>
+      <button class="nav-item active" data-module="welcome" onclick="Shell.navigate('welcome')">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Início</span>
+      </button>
+      <button class="nav-item" data-module="importer" onclick="Shell.navigate('importer')">
+        <span class="nav-icon">📦</span>
+        <span class="nav-label">Importar Projeto</span>
+        <span class="nav-badge" id="badge-importer" style="display:none">!</span>
+      </button>
+      <button class="nav-item" data-module="explorer" onclick="Shell.navigate('explorer')">
+        <span class="nav-icon">📁</span>
+        <span class="nav-label">Explorador</span>
+        <span class="nav-badge green" id="badge-explorer" style="display:none">0</span>
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Análise</div>
+      <button class="nav-item" data-module="deps" onclick="Shell.navigate('deps')">
+        <span class="nav-icon">🧩</span>
+        <span class="nav-label">Dependências</span>
+        <span class="nav-badge yellow" id="badge-deps" style="display:none">0</span>
+      </button>
+      <button class="nav-item" data-module="analyzer" onclick="Shell.navigate('analyzer')">
+        <span class="nav-icon">🔍</span>
+        <span class="nav-label">Analisador</span>
+        <span class="nav-badge red" id="badge-bugs" style="display:none">0</span>
+      </button>
+      <button class="nav-item" data-module="routes" onclick="Shell.navigate('routes')">
+        <span class="nav-icon">🛣️</span>
+        <span class="nav-label">Rotas de API</span>
+        <span class="nav-badge" id="badge-routes" style="display:none">0</span>
+      </button>
+      <button class="nav-item" data-module="cdn" onclick="Shell.navigate('cdn')">
+        <span class="nav-icon">🌐</span>
+        <span class="nav-label">Alternativas CDN</span>
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Laboratório</div>
+      <button class="nav-item" data-module="mapa" onclick="Shell.navigate('mapa')">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-label">Mapa de ligações</span>
+      </button>
+      <button class="nav-item" data-module="previa" onclick="Shell.navigate('previa')">
+        <span class="nav-icon">🧪</span>
+        <span class="nav-label">Prévia</span>
+      </button>
+      <button class="nav-item" data-module="desmontar" onclick="Shell.navigate('desmontar')">
+        <span class="nav-icon">🔪</span>
+        <span class="nav-label">Desmontar HTML</span>
+      </button>
+      <button class="nav-item" data-module="comparar" onclick="Shell.navigate('comparar')">
+        <span class="nav-icon">⚖️</span>
+        <span class="nav-label">Comparar A × B</span>
+      </button>
+      <button class="nav-item" data-module="ferramentas" onclick="Shell.navigate('ferramentas')">
+        <span class="nav-icon">🧰</span>
+        <span class="nav-label">Ferramentas</span>
+      </button>
+      <button class="nav-item" data-module="termux" onclick="Shell.navigate('termux')">
+        <span class="nav-icon">📱</span>
+        <span class="nav-label">Terminal de verdade</span>
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Geração</div>
+      <button class="nav-item" data-module="planner" onclick="Shell.navigate('planner')">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Plano do Projeto</span>
+      </button>
+      <button class="nav-item" data-module="scripts" onclick="Shell.navigate('scripts')">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Scripts BAT/SH</span>
+      </button>
+      <button class="nav-item" data-module="exporter" onclick="Shell.navigate('exporter')">
+        <span class="nav-icon">💾</span>
+        <span class="nav-label">Exportar</span>
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Ferramentas</div>
+      <button class="nav-item" data-module="terminal" onclick="Shell.navigate('terminal')">
+        <span class="nav-icon">💻</span>
+        <span class="nav-label">Terminal</span>
+        <span class="nav-badge yellow">simulado</span>
+      </button>
+    </div>
+
+    <!-- Espaço para info do projeto -->
+    <div style="flex:1"></div>
+    <div style="padding:12px; font-size:11px; color:var(--text-muted); border-top:1px solid var(--border);">
+      <div id="sidebar-project-name" style="font-weight:600; color:var(--text-secondary); margin-bottom:4px;">Sem projeto</div>
+      <div id="sidebar-project-info">Importe um projeto para começar</div>
+    </div>
+  </nav>
+
+  <!-- ===== ÁREA PRINCIPAL ===== -->
+  <main id="main">
+
+    <!-- Barra de abas -->
+    <div id="tabs-bar">
+      <div class="tab active" data-tab="welcome" onclick="Shell.activateTab('welcome')">
+        <span>🏠 Início</span>
+      </div>
+    </div>
+
+    <!-- Container dos módulos -->
+    <div id="modules-container">
+
+      <!-- TELA DE BOAS-VINDAS -->
+      <div class="module-panel active" id="panel-welcome">
+        <div id="welcome-screen">
+          <div class="welcome-logo">🔬</div>
+          <h1>🔬 Laboratório</h1>
+          <p>Importe seu projeto, analise dependências, detecte bugs, gere planos completos e scripts de recriação — tudo no navegador.</p>
+          <div class="welcome-grid">
+            <div class="welcome-card" onclick="Shell.navigate('importer')">
+              <div class="wc-icon">📦</div>
+              <div class="wc-title">Importar Projeto</div>
+              <div class="wc-desc">ZIP, TAR, TAZ, pasta completa</div>
+            </div>
+            <div class="welcome-card" onclick="Shell.navigate('deps')">
+              <div class="wc-icon">🧩</div>
+              <div class="wc-title">Dependências</div>
+              <div class="wc-desc">NPM, monorepo, CDN alternativas</div>
+            </div>
+            <div class="welcome-card" onclick="Shell.navigate('analyzer')">
+              <div class="wc-icon">🔍</div>
+              <div class="wc-title">Analisar Código</div>
+              <div class="wc-desc">Bugs, rotas, estrutura</div>
+            </div>
+            <div class="welcome-card" onclick="Shell.navigate('planner')">
+              <div class="wc-icon">📋</div>
+              <div class="wc-title">Gerar Plano</div>
+              <div class="wc-desc">MD completo, modular ou monolítico</div>
+            </div>
+            <div class="welcome-card" onclick="Shell.navigate('scripts')">
+              <div class="wc-icon">⚙️</div>
+              <div class="wc-title">Scripts BAT/SH</div>
+              <div class="wc-desc">Recriar estrutura do zero</div>
+            </div>
+            <div class="welcome-card" onclick="Shell.navigate('terminal')">
+              <div class="wc-icon">💻</div>
+              <div class="wc-title">Terminal</div>
+              <div class="wc-desc">Comandos de consulta + busca real no npm</div>
+            </div>
+          </div>
+          <div id="welcome-restore" style="display:none; margin-top:8px;">
+            <button class="btn btn-secondary" onclick="Shell.restoreSession()">
+              🔄 Restaurar sessão anterior
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAINÉIS DOS MÓDULOS (serão preenchidos pelos módulos seguintes) -->
+      <div class="module-panel" id="panel-importer">
+
+  <div style="max-width:800px; margin:0 auto;">
+
+    <div style="margin-bottom:20px;">
+      <h2 style="font-size:20px; font-weight:700; margin-bottom:6px;">📦 Importar Projeto</h2>
+      <p style="color:var(--text-secondary); font-size:13px;">
+        Suporte a ZIP, TAR, TAR.GZ, TAZ, GZ e pasta completa. Sem limite de arquivos ou tamanho.
+      </p>
+    </div>
+
+    <!-- Drop Zone -->
+    <div id="drop-zone">
+      <input type="file" id="file-input-zip"
+             accept=".zip,.tar,.tar.gz,.taz,.gz,.tgz"
+             multiple />
+      <div class="dz-icon">📦</div>
+      <div class="dz-title">Arraste seu projeto aqui</div>
+      <div class="dz-sub">ou clique para selecionar arquivo(s)</div>
+      <div class="dz-formats">
+        <span>.zip</span><span>.tar</span><span>.tar.gz</span>
+        <span>.taz</span><span>.gz</span><span>.tgz</span>
+      </div>
+    </div>
+
+    <!-- Botões alternativos -->
+    <div class="import-btn-row">
+      <button class="btn btn-secondary" onclick="Importer.openFolderPicker()">
+        📁 Importar Pasta Completa
+      </button>
+      <button class="btn btn-secondary" onclick="Importer.openFilePicker()">
+        📄 Selecionar Arquivo(s)
+      </button>
+      <button class="btn btn-secondary" onclick="Importer.pasteJSON()">
+        📋 Colar package.json
+      </button>
+      <button class="btn btn-danger" onclick="Importer.clearProject()" id="btn-clear-project" style="display:none">
+        🗑️ Limpar Projeto
+      </button>
+    </div>
+
+    <!-- Input oculto para pasta -->
+    <input type="file" id="folder-input" webkitdirectory multiple style="display:none" />
+
+    <!-- Progresso -->
+    <div id="import-progress">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+        <span style="font-size:13px; font-weight:600;">⏳ Processando...</span>
+        <span id="progress-percent" style="font-size:12px; color:var(--accent)">0%</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+      <div id="progress-text">Iniciando...</div>
+      <div id="progress-log"></div>
+    </div>
+
+    <!-- Stats após importação -->
+    <div id="import-stats" style="display:none; margin-top:20px;">
+      <div id="project-stats"></div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="Shell.navigate('explorer')">
+          📁 Ver Arquivos
+        </button>
+        <button class="btn btn-secondary" onclick="Shell.navigate('deps')">
+          🧩 Analisar Dependências
+        </button>
+        <button class="btn btn-secondary" onclick="Shell.navigate('analyzer')">
+          🔍 Analisar Código
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+      <div class="module-panel" id="panel-explorer">
+  <div id="explorer-layout">
+
+    <!-- Árvore de arquivos -->
+    <div id="file-tree-panel">
+      <div id="file-tree-header">
+        <span>📁 Arquivos</span>
+        <span id="tree-count" style="font-size:11px; color:var(--text-muted)">0</span>
+      </div>
+      <input type="text" id="file-tree-search"
+             placeholder="🔍 Filtrar arquivos..."
+             oninput="Importer.filterTree(this.value)" />
+      <div id="file-tree-container">
+        <div style="padding:20px; text-align:center; color:var(--text-muted); font-size:12px;">
+          Nenhum projeto importado
+        </div>
+      </div>
+    </div>
+
+    <!-- Visualizador de arquivo -->
+    <div id="file-viewer-panel">
+      <div id="file-viewer-header">
+        <span id="file-viewer-icon">📄</span>
+        <span id="file-viewer-name" style="font-weight:600; font-size:13px;">Nenhum arquivo</span>
+        <span id="file-viewer-path"></span>
+        <button class="btn btn-secondary" id="btn-copy-file"
+                onclick="Importer.copyCurrentFile()"
+                style="display:none; padding:4px 10px; font-size:11px;">
+          📋 Copiar
+        </button>
+        <button class="btn btn-secondary" id="btn-download-file"
+                onclick="Importer.downloadCurrentFile()"
+                style="display:none; padding:4px 10px; font-size:11px;">
+          ⬇️ Baixar
+        </button>
+      </div>
+      <div id="file-viewer-content">
+        <div id="file-viewer-empty">
+          <span style="font-size:48px;">📄</span>
+          <span>Selecione um arquivo na árvore</span>
+        </div>
+        <pre id="code-display" style="display:none"></pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+      <div class="module-panel" id="panel-deps">
+  <div style="max-width:1100px; margin:0 auto;">
+
+    <!-- Cabeçalho -->
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+      <div>
+        <h2 style="font-size:20px; font-weight:700; margin-bottom:4px;">🧩 Dependências</h2>
+        <p style="color:var(--text-secondary); font-size:13px;">
+          Análise completa de todos os package.json — incluindo monorepo
+        </p>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="DepsAnalyzer.analyze()">
+          🔍 Analisar Projeto
+        </button>
+        <button class="btn btn-secondary" onclick="DepsAnalyzer.unifyMonorepo()" id="btn-unify" style="display:none">
+          🔗 Unificar Monorepo
+        </button>
+        <button class="btn btn-secondary" onclick="DepsAnalyzer.exportDeps()">
+          ⬇️ Exportar Lista
+        </button>
+      </div>
+    </div>
+
+    <!-- Banner monorepo (aparece se detectado) -->
+    <div class="monorepo-banner" id="monorepo-banner" style="display:none">
+      <div class="mb-icon">🏗️</div>
+      <div class="mb-text">
+        <div class="mb-title">Monorepo Detectado!</div>
+        <div class="mb-sub" id="monorepo-info">Múltiplos package.json encontrados</div>
+      </div>
+      <button class="btn btn-success" onclick="DepsAnalyzer.unifyMonorepo()">
+        🔗 Unificar em um só
+      </button>
+    </div>
+
+    <!-- Resumo -->
+    <div class="deps-summary" id="deps-summary" style="display:none">
+      <div class="deps-sum-card">
+        <div class="dsv" id="ds-total" style="color:var(--accent)">0</div>
+        <div class="dsl">Total de deps</div>
+      </div>
+      <div class="deps-sum-card">
+        <div class="dsv" id="ds-prod" style="color:var(--accent-green)">0</div>
+        <div class="dsl">Produção</div>
+      </div>
+      <div class="deps-sum-card">
+        <div class="dsv" id="ds-dev" style="color:var(--text-muted)">0</div>
+        <div class="dsl">Dev</div>
+      </div>
+      <div class="deps-sum-card">
+        <div class="dsv" id="ds-cdn" style="color:#39d0d0">0</div>
+        <div class="dsl">Com CDN</div>
+      </div>
+      <div class="deps-sum-card">
+        <div class="dsv" id="ds-pkg" style="color:var(--accent-yellow)">0</div>
+        <div class="dsl">package.json</div>
+      </div>
+    </div>
+
+    <!-- Tabs de package.json -->
+    <div class="pkg-tabs" id="pkg-tabs" style="display:none"></div>
+
+    <!-- Toolbar de busca e filtros -->
+    <div class="deps-toolbar" id="deps-toolbar" style="display:none">
+      <input type="text" class="search-input"
+             placeholder="🔍 Buscar dependência..."
+             oninput="DepsAnalyzer.filterDeps(this.value)"
+             id="deps-search" />
+      <button class="btn btn-secondary" onclick="DepsAnalyzer.fetchAllDescriptions()" id="btn-fetch-all">
+        🌐 Buscar Descrições NPM
+      </button>
+    </div>
+
+    <div class="deps-filter-row" id="deps-filter-row" style="display:none">
+      <div class="filter-chip active" data-filter="all"    onclick="DepsAnalyzer.setFilter('all',this)">Todos</div>
+      <div class="filter-chip"        data-filter="prod"   onclick="DepsAnalyzer.setFilter('prod',this)">Produção</div>
+      <div class="filter-chip"        data-filter="dev"    onclick="DepsAnalyzer.setFilter('dev',this)">Dev</div>
+      <div class="filter-chip"        data-filter="relevante"   onclick="DepsAnalyzer.setFilter('relevante',this)">✅ Relevante</div>
+      <div class="filter-chip"        data-filter="opcional"    onclick="DepsAnalyzer.setFilter('opcional',this)">⚠️ Opcional</div>
+      <div class="filter-chip"        data-filter="substituivel" onclick="DepsAnalyzer.setFilter('substituivel',this)">🔄 Substituível</div>
+      <div class="filter-chip"        data-filter="cdn"    onclick="DepsAnalyzer.setFilter('cdn',this)">🌐 Tem CDN</div>
+    </div>
+
+    <!-- Estado vazio -->
+    <div id="deps-empty" style="text-align:center; padding:60px 20px; color:var(--text-muted);">
+      <div style="font-size:48px; margin-bottom:12px;">🧩</div>
+      <div style="font-size:15px; margin-bottom:8px;">Nenhuma dependência analisada</div>
+      <div style="font-size:13px; margin-bottom:20px;">Importe um projeto e clique em "Analisar Projeto"</div>
+      <button class="btn btn-primary" onclick="DepsAnalyzer.analyze()">
+        🔍 Analisar Agora
+      </button>
+    </div>
+
+    <!-- Grid de dependências -->
+    <div class="dep-grid" id="dep-grid"></div>
+
+    <!-- Progresso de busca NPM -->
+    <div id="deps-fetch-progress" style="display:none; margin-top:16px;">
+      <div class="card">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <div class="dep-spinner"></div>
+          <span style="font-size:13px;" id="deps-fetch-text">Buscando informações no NPM...</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="deps-fetch-bar"></div>
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:6px;" id="deps-fetch-sub"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+      <div class="module-panel" id="panel-analyzer">
+  <div style="max-width:1100px; margin:0 auto;">
+
+    <!-- Header -->
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+      <div>
+        <h2 style="font-size:20px; font-weight:700; margin-bottom:4px;">🔍 Analisador de Código</h2>
+        <p style="color:var(--text-secondary); font-size:13px;">
+          Detecta frameworks, bugs, padrões problemáticos e estrutura do projeto
+        </p>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="CodeAnalyzer.analyze()">
+          🔍 Analisar Projeto
+        </button>
+        <button class="btn btn-secondary" onclick="CodeAnalyzer.exportReport()">
+          ⬇️ Exportar Relatório
+        </button>
+      </div>
+    </div>
+
+    <!-- Frameworks detectados -->
+    <div id="fw-section" style="display:none; margin-bottom:20px;">
+      <div class="card">
+        <div class="card-title">🏗️ Frameworks e Tecnologias Detectadas</div>
+        <div id="fw-list" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+      </div>
+    </div>
+
+    <!-- Resumo -->
+    <div class="analysis-summary" id="analysis-summary" style="display:none">
+      <div class="as-card" onclick="CodeAnalyzer.setTab('bugs')">
+        <div class="asv" id="as-errors" style="color:var(--accent-red)">0</div>
+        <div class="asl">Erros</div>
+      </div>
+      <div class="as-card" onclick="CodeAnalyzer.setTab('bugs')">
+        <div class="asv" id="as-warnings" style="color:var(--accent-yellow)">0</div>
+        <div class="asl">Avisos</div>
+      </div>
+      <div class="as-card" onclick="CodeAnalyzer.setTab('bugs')">
+        <div class="asv" id="as-todos" style="color:var(--accent-purple)">0</div>
+        <div class="asl">TODOs</div>
+      </div>
+      <div class="as-card" onclick="CodeAnalyzer.setTab('routes')">
+        <div class="asv" id="as-routes" style="color:var(--accent-green)">0</div>
+        <div class="asl">Rotas API</div>
+      </div>
+      <div class="as-card" onclick="CodeAnalyzer.setTab('structure')">
+        <div class="asv" id="as-files" style="color:var(--accent)">0</div>
+        <div class="asl">Arquivos</div>
+      </div>
+      <div class="as-card" onclick="CodeAnalyzer.setTab('structure')">
+        <div class="asv" id="as-lines" style="color:#39d0d0">0</div>
+        <div class="asl">Linhas de código</div>
+      </div>
+    </div>
+
+    <!-- Estado vazio -->
+    <div id="analyzer-empty" style="text-align:center; padding:60px 20px; color:var(--text-muted);">
+      <div style="font-size:48px; margin-bottom:12px;">🔍</div>
+      <div style="font-size:15px; margin-bottom:8px;">Nenhuma análise realizada</div>
+      <div style="font-size:13px; margin-bottom:20px;">Importe um projeto e clique em "Analisar Projeto"</div>
+      <button class="btn btn-primary" onclick="CodeAnalyzer.analyze()">🔍 Analisar Agora</button>
+    </div>
+
+    <!-- Conteúdo da análise -->
+    <div id="analyzer-content" style="display:none;">
+
+      <!-- Tabs -->
+      <div class="analyzer-tabs">
+        <button class="analyzer-tab active" data-tab="bugs"      onclick="CodeAnalyzer.setTab('bugs',this)">
+          🐛 Bugs e Avisos <span id="tab-bugs-count"></span>
+        </button>
+        <button class="analyzer-tab"        data-tab="routes"    onclick="CodeAnalyzer.setTab('routes',this)">
+          🛣️ Rotas API <span id="tab-routes-count"></span>
+        </button>
+        <button class="analyzer-tab"        data-tab="structure" onclick="CodeAnalyzer.setTab('structure',this)">
+          🗂️ Estrutura
+        </button>
+        <button class="analyzer-tab"        data-tab="console"   onclick="CodeAnalyzer.setTab('console',this)">
+          🖨️ Console.logs <span id="tab-console-count"></span>
+        </button>
+      </div>
+
+      <!-- Tab: Bugs -->
+      <div id="tab-panel-bugs">
+        <div class="bug-filters">
+          <div class="filter-chip active" onclick="CodeAnalyzer.setBugFilter('all',this)">Todos</div>
+          <div class="filter-chip" onclick="CodeAnalyzer.setBugFilter('error',this)">❌ Erros</div>
+          <div class="filter-chip" onclick="CodeAnalyzer.setBugFilter('warning',this)">⚠️ Avisos</div>
+          <div class="filter-chip" onclick="CodeAnalyzer.setBugFilter('todo',this)">📝 TODOs</div>
+          <div class="filter-chip" onclick="CodeAnalyzer.setBugFilter('info',this)">ℹ️ Info</div>
+        </div>
+        <div id="bugs-grid" class="analyzer-grid"></div>
+        <div id="bugs-empty" style="display:none; text-align:center; padding:40px; color:var(--accent-green);">
+          <div style="font-size:36px; margin-bottom:8px;">✅</div>
+          <div>Nenhum problema encontrado nesta categoria!</div>
+        </div>
+      </div>
+
+      <!-- Tab: Rotas (resumo aqui, painel completo em panel-routes) -->
+      <div id="tab-panel-routes" style="display:none;">
+        <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="Shell.navigate('routes')">
+            🛣️ Ver painel completo de rotas
+          </button>
+          <button class="btn btn-secondary" onclick="CodeAnalyzer.copyRoutes()">
+            📋 Copiar todas as rotas
+          </button>
+          <button class="btn btn-secondary" onclick="CodeAnalyzer.exportRoutes()">
+            ⬇️ Exportar em MD
+          </button>
+        </div>
+        <div id="routes-summary-list" class="routes-list"></div>
+      </div>
+
+      <!-- Tab: Estrutura -->
+      <div id="tab-panel-structure" style="display:none;">
+        <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="CodeAnalyzer.copyStructure()">
+            📋 Copiar estrutura
+          </button>
+          <button class="btn btn-secondary" onclick="CodeAnalyzer.exportStructure()">
+            ⬇️ Exportar MD
+          </button>
+        </div>
+        <div id="structure-display" class="structure-tree"></div>
+        <div id="file-types-chart" style="margin-top:16px;"></div>
+      </div>
+
+      <!-- Tab: Console.logs -->
+      <div id="tab-panel-console" style="display:none;">
+        <div style="margin-bottom:12px;">
+          <p style="font-size:13px; color:var(--text-secondary);">
+            Console.logs esquecidos no código — remova antes de ir para produção
+          </p>
+        </div>
+        <div id="console-grid" class="analyzer-grid"></div>
+        <div id="console-empty" style="display:none; text-align:center; padding:40px; color:var(--accent-green);">
+          <div style="font-size:36px; margin-bottom:8px;">✅</div>
+          <div>Nenhum console.log encontrado!</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+      <div class="module-panel" id="panel-routes">
+  <div style="max-width:1000px; margin:0 auto;">
+
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+      <div>
+        <h2 style="font-size:20px; font-weight:700; margin-bottom:4px;">🛣️ Rotas de API</h2>
+        <p style="color:var(--text-secondary); font-size:13px;">
+          Todas as rotas detectadas — Express, Next.js, Fastify, Koa, NestJS e mais
+        </p>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="CodeAnalyzer.copyRoutes()">📋 Copiar</button>
+        <button class="btn btn-secondary" onclick="CodeAnalyzer.exportRoutes()">⬇️ Exportar MD</button>
+      </div>
+    </div>
+
+    <!-- Filtros de método -->
+    <div class="bug-filters" id="routes-method-filters">
+      <div class="filter-chip active" onclick="CodeAnalyzer.setRouteFilter('all',this)">Todos</div>
+      <div class="filter-chip" onclick="CodeAnalyzer.setRouteFilter('GET',this)">GET</div>
+      <div class="filter-chip" onclick="CodeAnalyzer.setRouteFilter('POST',this)">POST</div>
+      <div class="filter-chip" onclick="CodeAnalyzer.setRouteFilter('PUT',this)">PUT</div>
+      <div class="filter-chip" onclick="CodeAnalyzer.setRouteFilter('PATCH',this)">PATCH</div>
+      <div class="filter-chip" onclick="CodeAnalyzer.setRouteFilter('DELETE',this)">DELETE</div>
+      <div class="filter-chip" onclick="CodeAnalyzer.setRouteFilter('WS',this)">WebSocket</div>
+    </div>
+
+    <div id="routes-empty" style="text-align:center; padding:60px; color:var(--text-muted);">
+      <div style="font-size:48px; margin-bottom:12px;">🛣️</div>
+      <div style="font-size:15px; margin-bottom:8px;">Nenhuma rota detectada ainda</div>
+      <button class="btn btn-primary" onclick="CodeAnalyzer.analyze()">🔍 Analisar Projeto</button>
+    </div>
+
+    <div id="routes-full-list" class="routes-list" style="display:none;"></div>
+  </div>
+</div>
+
+      <div class="module-panel" id="panel-cdn">
+  <div style="max-width:900px; margin:0 auto;">
+    <div style="margin-bottom:20px;">
+      <h2 style="font-size:20px; font-weight:700; margin-bottom:4px;">🌐 Alternativas CDN</h2>
+      <p style="color:var(--text-secondary); font-size:13px;">
+        Tags prontas para usar via jsDelivr e unpkg — sem precisar instalar nada
+      </p>
+    </div>
+
+    <div id="cdn-empty" style="text-align:center; padding:60px 20px; color:var(--text-muted);">
+      <div style="font-size:48px; margin-bottom:12px;">🌐</div>
+      <div style="font-size:15px; margin-bottom:8px;">Nenhuma CDN gerada ainda</div>
+      <div style="font-size:13px; margin-bottom:20px;">Analise as dependências primeiro</div>
+      <button class="btn btn-primary" onclick="Shell.navigate('deps')">
+        🧩 Ir para Dependências
+      </button>
+    </div>
+
+    <div id="cdn-content" style="display:none;">
+      <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="DepsAnalyzer.copyAllCDN()">
+          📋 Copiar Todas as Tags
+        </button>
+        <button class="btn btn-secondary" onclick="DepsAnalyzer.downloadCDNFile()">
+          ⬇️ Baixar como HTML
+        </button>
+      </div>
+      <div id="cdn-grid" class="dep-grid"></div>
+    </div>
+  </div>
+</div>
+
+      <div class="module-panel" id="panel-planner">
+  <div style="max-width:1200px; margin:0 auto;">
+
+    <!-- Header -->
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+      <div>
+        <h2 style="font-size:20px; font-weight:700; margin-bottom:4px;">📋 Gerador de Plano</h2>
+        <p style="color:var(--text-secondary); font-size:13px;">
+          Plano completo em Markdown — versão monolítica ou modular, copiável e baixável por partes
+        </p>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="Planner.generate()">
+          ⚡ Gerar Plano
+        </button>
+        <button class="btn btn-secondary" onclick="Planner.downloadAll()" id="btn-dl-all" style="display:none">
+          ⬇️ Baixar Tudo
+        </button>
+        <button class="btn btn-secondary" onclick="Planner.copyAll()" id="btn-copy-all" style="display:none">
+          📋 Copiar Tudo
+        </button>
+      </div>
+    </div>
+
+    <div class="planner-layout">
+
+      <!-- Sidebar de opções -->
+      <div class="planner-sidebar">
+
+        <div class="planner-option-card">
+          <div class="poc-title">⚙️ Tipo de Plano</div>
+          <div class="plan-type-tabs" style="flex-direction:column; gap:4px; background:none; border:none; padding:0;">
+            <button class="plan-type-tab active" id="ptt-mono"
+                    onclick="Planner.setPlanType('monolitico',this)">
+              🧱 Monolítico
+            </button>
+            <button class="plan-type-tab" id="ptt-mod"
+                    onclick="Planner.setPlanType('modular',this)">
+              🧩 Modular
+            </button>
+            <button class="plan-type-tab" id="ptt-both"
+                    onclick="Planner.setPlanType('ambos',this)">
+              📦 Ambos
+            </button>
+          </div>
+        </div>
+
+        <div class="planner-option-card">
+          <div class="poc-title">📑 Seções do Plano</div>
+          <div class="planner-toggle" onclick="Planner.toggleSection('overview')">
+            <span>📌 Visão Geral</span>
+            <div class="toggle-sw on" id="tog-overview"></div>
+          </div>
+          <div class="planner-toggle" onclick="Planner.toggleSection('tech')">
+            <span>🏗️ Tecnologias</span>
+            <div class="toggle-sw on" id="tog-tech"></div>
+          </div>
+          <div class="planner-toggle" onclick="Planner.toggleSection('structure')">
+            <span>🗂️ Estrutura</span>
+            <div class="toggle-sw on" id="tog-structure"></div>
+          </div>
+          <div class="planner-toggle" onclick="Planner.toggleSection('deps')">
+            <span>🧩 Dependências</span>
+            <div class="toggle-sw on" id="tog-deps"></div>
+          </div>
+          <div class="planner-toggle" onclick="Planner.toggleSection('routes')">
+            <span>🛣️ Rotas API</span>
+            <div class="toggle-sw on" id="tog-routes"></div>
+          </div>
+          <div class="planner-toggle" onclick="Planner.toggleSection('bugs')">
+            <span>🐛 Problemas</span>
+            <div class="toggle-sw on" id="tog-bugs"></div>
+          </div>
+          <div class="planner-toggle" onclick="Planner.toggleSection('modules')">
+            <span>🧩 Módulos</span>
+            <div class="toggle-sw on" id="tog-modules"></div>
+          </div>
+          <div class="planner-toggle" onclick="Planner.toggleSection('steps')">
+            <span>📝 Passos de Recriação</span>
+            <div class="toggle-sw on" id="tog-steps"></div>
+          </div>
+          <div class="planner-toggle" onclick="Planner.toggleSection('scripts')">
+            <span>⚙️ Scripts de Setup</span>
+            <div class="toggle-sw on" id="tog-scripts"></div>
+          </div>
+        </div>
+
+        <div class="planner-option-card">
+          <div class="poc-title">📤 Exportação</div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button class="btn btn-secondary" style="width:100%; justify-content:flex-start;"
+                    onclick="Planner.downloadPart('overview')">
+              ⬇️ Parte 1 — Visão Geral
+            </button>
+            <button class="btn btn-secondary" style="width:100%; justify-content:flex-start;"
+                    onclick="Planner.downloadPart('tech')">
+              ⬇️ Parte 2 — Tecnologias
+            </button>
+            <button class="btn btn-secondary" style="width:100%; justify-content:flex-start;"
+                    onclick="Planner.downloadPart('deps')">
+              ⬇️ Parte 3 — Dependências
+            </button>
+            <button class="btn btn-secondary" style="width:100%; justify-content:flex-start;"
+                    onclick="Planner.downloadPart('routes')">
+              ⬇️ Parte 4 — Rotas
+            </button>
+            <button class="btn btn-secondary" style="width:100%; justify-content:flex-start;"
+                    onclick="Planner.downloadPart('modules')">
+              ⬇️ Parte 5 — Módulos
+            </button>
+            <button class="btn btn-secondary" style="width:100%; justify-content:flex-start;"
+                    onclick="Planner.downloadPart('steps')">
+              ⬇️ Parte 6 — Passos
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Área principal do plano -->
+      <div class="planner-main">
+
+        <!-- Progresso de geração -->
+        <div class="gen-progress" id="gen-progress">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+            <div class="dep-spinner"></div>
+            <span id="gen-progress-text" style="font-size:13px;">Gerando plano...</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="gen-progress-bar"></div>
+          </div>
+        </div>
+
+        <!-- Estado vazio -->
+        <div id="planner-empty" style="text-align:center; padding:80px 20px; color:var(--text-muted);">
+          <div style="font-size:56px; margin-bottom:16px;">📋</div>
+          <div style="font-size:16px; margin-bottom:8px; color:var(--text-secondary);">Nenhum plano gerado ainda</div>
+          <div style="font-size:13px; margin-bottom:24px;">
+            Importe um projeto, analise as dependências e o código,<br>depois clique em "Gerar Plano"
+          </div>
+          <button class="btn btn-primary" onclick="Planner.generate()">
+            ⚡ Gerar Plano Agora
+          </button>
+        </div>
+
+        <!-- Conteúdo do plano -->
+        <div id="planner-content" style="display:none;">
+
+          <!-- Tabs visualização -->
+          <div style="display:flex; gap:4px; margin-bottom:12px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:4px;">
+            <button class="plan-type-tab active" onclick="Planner.setView('preview',this)">👁️ Preview</button>
+            <button class="plan-type-tab" onclick="Planner.setView('raw',this)">📝 Markdown Raw</button>
+            <button class="plan-type-tab" onclick="Planner.setView('parts',this)">📦 Por Partes</button>
+            <button class="plan-type-tab" onclick="Planner.setView('modular',this)">🧩 Módulos</button>
+          </div>
+
+          <!-- View: Preview -->
+          <div id="view-preview">
+            <div class="md-preview" id="plan-preview-content"></div>
+          </div>
+
+          <!-- View: Raw MD -->
+          <div id="view-raw" style="display:none;">
+            <div style="display:flex; gap:8px; margin-bottom:8px;">
+              <button class="btn btn-secondary" onclick="Planner.copyAll()">📋 Copiar tudo</button>
+              <button class="btn btn-secondary" onclick="Planner.downloadAll()">⬇️ Baixar .md</button>
+            </div>
+            <textarea class="md-editor" id="plan-raw-content" style="min-height:500px;"></textarea>
+          </div>
+
+          <!-- View: Por Partes -->
+          <div id="view-parts" style="display:none;">
+            <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+              Cada parte pode ser copiada ou baixada separadamente — ideal para usar com IA
+            </p>
+            <div id="parts-container"></div>
+          </div>
+
+          <!-- View: Módulos (plano modular) -->
+          <div id="view-modular" style="display:none;">
+            <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+              Cada módulo é independente — pode ser desenvolvido, testado e reutilizado separadamente
+            </p>
+            <div id="modular-container"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="module-panel" id="panel-scripts">
+  <div style="max-width:1100px; margin:0 auto;">
+
+    <!-- Header -->
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+      <div>
+        <h2 style="font-size:20px; font-weight:700; margin-bottom:4px;">⚙️ Gerador de Scripts</h2>
+        <p style="color:var(--text-secondary); font-size:13px;">
+          Scripts BAT (Windows) e SH (Linux/Mac) comentados em PT-BR para recriar o projeto do zero
+        </p>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="ScriptGen.generate()">
+          ⚡ Gerar Scripts
+        </button>
+        <button class="btn btn-secondary" onclick="ScriptGen.downloadAll()" id="btn-scripts-dl" style="display:none">
+          ⬇️ Baixar Todos
+        </button>
+      </div>
+    </div>
+
+    <div class="scripts-layout">
+
+      <!-- Sidebar -->
+      <div class="scripts-sidebar">
+
+        <div class="planner-option-card">
+          <div class="poc-title">📦 O que incluir</div>
+          <div class="script-option" onclick="ScriptGen.toggleOpt('folders')">
+            <div class="so-label">
+              <div class="opt-checkbox checked" id="opt-folders">✓</div>
+              <span>📁 Criar pastas</span>
+            </div>
+          </div>
+          <div class="script-option" onclick="ScriptGen.toggleOpt('files')">
+            <div class="so-label">
+              <div class="opt-checkbox checked" id="opt-files">✓</div>
+              <span>📄 Criar arquivos vazios</span>
+            </div>
+          </div>
+          <div class="script-option" onclick="ScriptGen.toggleOpt('npm')">
+            <div class="so-label">
+              <div class="opt-checkbox checked" id="opt-npm">✓</div>
+              <span>📦 npm install</span>
+            </div>
+          </div>
+          <div class="script-option" onclick="ScriptGen.toggleOpt('env')">
+            <div class="so-label">
+              <div class="opt-checkbox checked" id="opt-env">✓</div>
+              <span>🔒 Criar .env</span>
+            </div>
+          </div>
+          <div class="script-option" onclick="ScriptGen.toggleOpt('git')">
+            <div class="so-label">
+              <div class="opt-checkbox checked" id="opt-git">✓</div>
+              <span>🐙 git init</span>
+            </div>
+          </div>
+          <div class="script-option" onclick="ScriptGen.toggleOpt('readme')">
+            <div class="so-label">
+              <div class="opt-checkbox checked" id="opt-readme">✓</div>
+              <span>📝 Criar README.md</span>
+            </div>
+          </div>
+          <div class="script-option" onclick="ScriptGen.toggleOpt('pkgjson')">
+            <div class="so-label">
+              <div class="opt-checkbox checked" id="opt-pkgjson">✓</div>
+              <span>📋 Criar package.json</span>
+            </div>
+          </div>
+          <div class="script-option" onclick="ScriptGen.toggleOpt('gitignore')">
+            <div class="so-label">
+              <div class="opt-checkbox checked" id="opt-gitignore">✓</div>
+              <span>🙈 Criar .gitignore</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="planner-option-card">
+          <div class="poc-title">⚙️ Configurações</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div>
+              <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">
+                Gerenciador de pacotes
+              </label>
+              <select id="pkg-manager" style="width:100%; background:var(--bg-hover); border:1px solid var(--border); border-radius:var(--radius); color:var(--text-primary); padding:6px 8px; font-size:12px; font-family:var(--font-main);">
+                <option value="npm">npm</option>
+                <option value="yarn">yarn</option>
+                <option value="pnpm">pnpm</option>
+                <option value="bun">bun</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">
+                Node.js mínimo
+              </label>
+              <select id="node-version" style="width:100%; background:var(--bg-hover); border:1px solid var(--border); border-radius:var(--radius); color:var(--text-primary); padding:6px 8px; font-size:12px; font-family:var(--font-main);">
+                <option value="18">Node 18 (LTS)</option>
+                <option value="20">Node 20 (LTS)</option>
+                <option value="22">Node 22</option>
+                <option value="16">Node 16</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="planner-option-card">
+          <div class="poc-title">⬇️ Downloads</div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button class="btn btn-secondary" style="width:100%; justify-content:flex-start; font-family:var(--font-mono);"
+                    onclick="ScriptGen.downloadBAT()">
+              ⬇️ setup.bat
+            </button>
+            <button class="btn btn-secondary" style="width:100%; justify-content:flex-start; font-family:var(--font-mono);"
+                    onclick="ScriptGen.downloadSH()">
+              ⬇️ setup.sh
+            </button>
+            <button class="btn btn-secondary" style="width:100%; justify-content:flex-start; font-family:var(--font-mono);"
+                    onclick="ScriptGen.downloadPS1()">
+              ⬇️ setup.ps1
+            </button>
+            <button class="btn btn-secondary" style="width:100%; justify-content:flex-start; font-family:var(--font-mono);"
+                    onclick="ScriptGen.downloadMakefile()">
+              ⬇️ Makefile
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Área principal -->
+      <div>
+
+        <!-- Estado vazio -->
+        <div id="scripts-empty" style="text-align:center; padding:80px 20px; color:var(--text-muted);">
+          <div style="font-size:56px; margin-bottom:16px;">⚙️</div>
+          <div style="font-size:16px; margin-bottom:8px; color:var(--text-secondary);">Nenhum script gerado ainda</div>
+          <div style="font-size:13px; margin-bottom:24px;">Importe um projeto e clique em "Gerar Scripts"</div>
+          <button class="btn btn-primary" onclick="ScriptGen.generate()">⚡ Gerar Agora</button>
+        </div>
+
+        <!-- Conteúdo dos scripts -->
+        <div id="scripts-content" style="display:none;">
+
+          <!-- Tabs BAT / SH / PS1 / Makefile -->
+          <div class="script-type-tabs">
+            <button class="script-type-tab active" onclick="ScriptGen.setTab('bat',this)">
+              🪟 .BAT
+            </button>
+            <button class="script-type-tab" onclick="ScriptGen.setTab('sh',this)">
+              🐧 .SH
+            </button>
+            <button class="script-type-tab" onclick="ScriptGen.setTab('ps1',this)">
+              💙 .PS1
+            </button>
+            <button class="script-type-tab" onclick="ScriptGen.setTab('makefile',this)">
+              🔧 Makefile
+            </button>
+          </div>
+
+          <!-- BAT -->
+          <div id="script-panel-bat">
+            <div class="script-display-area">
+              <div class="script-display-header">
+                <div class="sdh-title">🪟 setup.bat — Windows</div>
+                <div class="sdh-actions">
+                  <button class="btn btn-secondary" style="font-size:11px; padding:4px 10px;"
+                          onclick="ScriptGen.copyScript('bat')">📋 Copiar</button>
+                  <button class="btn btn-secondary" style="font-size:11px; padding:4px 10px;"
+                          onclick="ScriptGen.downloadBAT()">⬇️ Baixar</button>
+                </div>
+              </div>
+              <div class="script-code" id="bat-code"></div>
+              <div class="script-stats" id="bat-stats"></div>
+            </div>
+          </div>
+
+          <!-- SH -->
+          <div id="script-panel-sh" style="display:none;">
+            <div class="script-display-area">
+              <div class="script-display-header">
+                <div class="sdh-title">🐧 setup.sh — Linux / Mac</div>
+                <div class="sdh-actions">
+                  <button class="btn btn-secondary" style="font-size:11px; padding:4px 10px;"
+                          onclick="ScriptGen.copyScript('sh')">📋 Copiar</button>
+                  <button class="btn btn-secondary" style="font-size:11px; padding:4px 10px;"
+                          onclick="ScriptGen.downloadSH()">⬇️ Baixar</button>
+                </div>
+              </div>
+              <div class="script-code" id="sh-code"></div>
+              <div class="script-stats" id="sh-stats"></div>
+            </div>
+          </div>
+
+          <!-- PS1 -->
+          <div id="script-panel-ps1" style="display:none;">
+            <div class="script-display-area">
+              <div class="script-display-header">
+                <div class="sdh-title">💙 setup.ps1 — PowerShell</div>
+                <div class="sdh-actions">
+                  <button class="btn btn-secondary" style="font-size:11px; padding:4px 10px;"
+                          onclick="ScriptGen.copyScript('ps1')">📋 Copiar</button>
+                  <button class="btn btn-secondary" style="font-size:11px; padding:4px 10px;"
+                          onclick="ScriptGen.downloadPS1()">⬇️ Baixar</button>
+                </div>
+              </div>
+              <div class="script-code" id="ps1-code"></div>
+              <div class="script-stats" id="ps1-stats"></div>
+            </div>
+          </div>
+
+          <!-- Makefile -->
+          <div id="script-panel-makefile" style="display:none;">
+            <div class="script-display-area">
+              <div class="script-display-header">
+                <div class="sdh-title">🔧 Makefile — Universal</div>
+                <div class="sdh-actions">
+                  <button class="btn btn-secondary" style="font-size:11px; padding:4px 10px;"
+                          onclick="ScriptGen.copyScript('makefile')">📋 Copiar</button>
+                  <button class="btn btn-secondary" style="font-size:11px; padding:4px 10px;"
+                          onclick="ScriptGen.downloadMakefile()">⬇️ Baixar</button>
+                </div>
+              </div>
+              <div class="script-code" id="makefile-code"></div>
+              <div class="script-stats" id="makefile-stats"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="module-panel" id="panel-exporter">
+  <div style="max-width:1100px; margin:0 auto;">
+
+    <!-- Header -->
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+      <div>
+        <h2 style="font-size:20px; font-weight:700; margin-bottom:4px;">💾 Exportador Universal</h2>
+        <p style="color:var(--text-secondary); font-size:13px;">
+          Exporte tudo — ZIP completo, MDs separados, sessão, pacote para IA
+        </p>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="Exporter.exportAll()">
+          📦 Exportar Tudo
+        </button>
+        <button class="btn btn-secondary" onclick="Exporter.exportForAI()">
+          🤖 Pacote para IA
+        </button>
+      </div>
+    </div>
+
+    <!-- Resumo da sessão -->
+    <div class="session-summary" id="session-summary">
+      <div class="session-card">
+        <div class="sc-val" id="exp-files">0</div>
+        <div class="sc-lbl">Arquivos</div>
+      </div>
+      <div class="session-card">
+        <div class="sc-val" id="exp-deps">0</div>
+        <div class="sc-lbl">Dependências</div>
+      </div>
+      <div class="session-card">
+        <div class="sc-val" id="exp-routes">0</div>
+        <div class="sc-lbl">Rotas</div>
+      </div>
+      <div class="session-card">
+        <div class="sc-val" id="exp-bugs">0</div>
+        <div class="sc-lbl">Problemas</div>
+      </div>
+      <div class="session-card">
+        <div class="sc-val" id="exp-size">0KB</div>
+        <div class="sc-lbl">Tamanho total</div>
+      </div>
+      <div class="session-card">
+        <div class="sc-val" id="exp-modules">0</div>
+        <div class="sc-lbl">Módulos</div>
+      </div>
+    </div>
+
+    <!-- Progresso -->
+    <div class="export-progress-wrap" id="export-progress">
+      <div class="export-progress-title">
+        <div class="dep-spinner"></div>
+        <span id="export-progress-text">Preparando exportação...</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="export-progress-bar" style="width:0%"></div>
+      </div>
+      <div id="export-file-list" class="export-file-list" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- Cards de exportação -->
+    <div class="exporter-grid">
+
+      <!-- ZIP Completo -->
+      <div class="export-card green">
+        <div class="export-card-icon">📦</div>
+        <div class="export-card-title">ZIP Completo</div>
+        <div class="export-card-desc">
+          Todos os arquivos do projeto + plano + scripts + relatório em um único ZIP
+        </div>
+        <div class="export-card-meta">
+          <span class="export-meta-tag">.zip</span>
+          <span class="export-meta-tag">projeto completo</span>
+          <span class="export-meta-tag">tudo incluso</span>
+        </div>
+        <div class="export-card-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="Exporter.exportZIP()">
+            ⬇️ Baixar ZIP
+          </button>
+        </div>
+      </div>
+
+      <!-- Plano MD -->
+      <div class="export-card blue">
+        <div class="export-card-icon">📋</div>
+        <div class="export-card-title">Plano Completo</div>
+        <div class="export-card-desc">
+          Plano do projeto em Markdown — visão geral, tecnologias, módulos, passos
+        </div>
+        <div class="export-card-meta">
+          <span class="export-meta-tag">.md</span>
+          <span class="export-meta-tag">markdown</span>
+          <span class="export-meta-tag">plano</span>
+        </div>
+        <div class="export-card-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="Exporter.exportPlan()">
+            ⬇️ Baixar MD
+          </button>
+          <button class="btn btn-secondary" onclick="Exporter.copyPlan()">
+            📋 Copiar
+          </button>
+        </div>
+      </div>
+
+      <!-- Scripts BAT/SH -->
+      <div class="export-card yellow">
+        <div class="export-card-icon">⚙️</div>
+        <div class="export-card-title">Scripts de Setup</div>
+        <div class="export-card-desc">
+          setup.bat + setup.sh + setup.ps1 + Makefile — todos de uma vez
+        </div>
+        <div class="export-card-meta">
+          <span class="export-meta-tag">.bat</span>
+          <span class="export-meta-tag">.sh</span>
+          <span class="export-meta-tag">.ps1</span>
+          <span class="export-meta-tag">Makefile</span>
+        </div>
+        <div class="export-card-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="Exporter.exportScripts()">
+            ⬇️ Baixar Scripts
+          </button>
+        </div>
+      </div>
+
+      <!-- Relatório de Bugs -->
+      <div class="export-card red">
+        <div class="export-card-icon">🐛</div>
+        <div class="export-card-title">Relatório de Problemas</div>
+        <div class="export-card-desc">
+          Erros, avisos, TODOs e console.logs — lista completa com localização
+        </div>
+        <div class="export-card-meta">
+          <span class="export-meta-tag">.md</span>
+          <span class="export-meta-tag">bugs</span>
+          <span class="export-meta-tag">análise</span>
+        </div>
+        <div class="export-card-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="Exporter.exportBugs()">
+            ⬇️ Baixar MD
+          </button>
+          <button class="btn btn-secondary" onclick="Exporter.copyBugs()">
+            📋 Copiar
+          </button>
+        </div>
+      </div>
+
+      <!-- Dependências -->
+      <div class="export-card purple">
+        <div class="export-card-icon">🧩</div>
+        <div class="export-card-title">Dependências</div>
+        <div class="export-card-desc">
+          Lista completa de dependências com versões, CDN e classificação
+        </div>
+        <div class="export-card-meta">
+          <span class="export-meta-tag">.md</span>
+          <span class="export-meta-tag">.json</span>
+          <span class="export-meta-tag">deps</span>
+        </div>
+        <div class="export-card-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="Exporter.exportDeps()">
+            ⬇️ MD
+          </button>
+          <button class="btn btn-secondary" onclick="Exporter.exportDepsJSON()">
+            ⬇️ JSON
+          </button>
+          <button class="btn btn-secondary" onclick="Exporter.copyDeps()">
+            📋
+          </button>
+        </div>
+      </div>
+
+      <!-- Rotas API -->
+      <div class="export-card teal">
+        <div class="export-card-icon">🛣️</div>
+        <div class="export-card-title">Rotas de API</div>
+        <div class="export-card-desc">
+          Todos os endpoints detectados com método, caminho e framework
+        </div>
+        <div class="export-card-meta">
+          <span class="export-meta-tag">.md</span>
+          <span class="export-meta-tag">.json</span>
+          <span class="export-meta-tag">rotas</span>
+        </div>
+        <div class="export-card-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="Exporter.exportRoutes()">
+            ⬇️ MD
+          </button>
+          <button class="btn btn-secondary" onclick="Exporter.exportRoutesJSON()">
+            ⬇️ JSON
+          </button>
+          <button class="btn btn-secondary" onclick="Exporter.copyRoutes()">
+            📋
+          </button>
+        </div>
+      </div>
+
+      <!-- Sessão completa -->
+      <div class="export-card blue">
+        <div class="export-card-icon">💿</div>
+        <div class="export-card-title">Sessão Completa</div>
+        <div class="export-card-desc">
+          Salva toda a sessão em JSON — recarregue depois sem precisar reimportar
+        </div>
+        <div class="export-card-meta">
+          <span class="export-meta-tag">.json</span>
+          <span class="export-meta-tag">sessão</span>
+          <span class="export-meta-tag">backup</span>
+        </div>
+        <div class="export-card-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="Exporter.exportSession()">
+            ⬇️ Salvar Sessão
+          </button>
+          <button class="btn btn-secondary" onclick="Exporter.importSession()">
+            📂 Carregar
+          </button>
+        </div>
+      </div>
+
+      <!-- Pacote para IA -->
+      <div class="export-card green">
+        <div class="export-card-icon">🤖</div>
+        <div class="export-card-title">Pacote para IA</div>
+        <div class="export-card-desc">
+          Contexto otimizado para colar em ChatGPT, Claude, Gemini — resumido e estruturado
+        </div>
+        <div class="export-card-meta">
+          <span class="export-meta-tag">.md</span>
+          <span class="export-meta-tag">IA</span>
+          <span class="export-meta-tag">contexto</span>
+        </div>
+        <div class="export-card-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="Exporter.exportForAI()">
+            🤖 Gerar Contexto
+          </button>
+          <button class="btn btn-secondary" onclick="Exporter.copyForAI()">
+            📋 Copiar
+          </button>
+        </div>
+      </div>
+
+      <!-- Estrutura de pastas -->
+      <div class="export-card yellow">
+        <div class="export-card-icon">🗂️</div>
+        <div class="export-card-title">Estrutura de Pastas</div>
+        <div class="export-card-desc">
+          Árvore completa de arquivos e pastas em texto puro
+        </div>
+        <div class="export-card-meta">
+          <span class="export-meta-tag">.md</span>
+          <span class="export-meta-tag">.txt</span>
+          <span class="export-meta-tag">estrutura</span>
+        </div>
+        <div class="export-card-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="Exporter.exportStructure()">
+            ⬇️ Baixar
+          </button>
+          <button class="btn btn-secondary" onclick="Exporter.copyStructure()">
+            📋 Copiar
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Histórico de exportações -->
+    <div class="card">
+      <div class="card-title">🕐 Histórico de Exportações</div>
+      <div id="export-history">
+        <div style="font-size:13px; color:var(--text-muted); padding:8px 0;">
+          Nenhuma exportação realizada ainda
+        </div>
+      </div>
+    </div>
+
+    <!-- Input oculto para importar sessão -->
+    <input type="file" id="session-file-input" accept=".json"
+           style="display:none" onchange="Exporter.loadSession(event)">
+
+  </div>
+</div>
+
+      <div class="module-panel" id="panel-terminal">
+  <div style="max-width:1200px; margin:0 auto;">
+
+    <!-- Header -->
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+      <div>
+        <h2 style="font-size:20px; font-weight:700; margin-bottom:4px;">💻 Terminal</h2>
+        <p style="color:var(--text-secondary); font-size:13px;">
+          Execute comandos, busque pacotes NPM e gerencie o projeto
+        </p>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <div class="env-status" id="env-status">
+          <div class="env-dot offline" id="env-dot"></div>
+          <span id="env-status-text">Ambiente não iniciado</span>
+        </div>
+        <button class="btn btn-primary" id="btn-init-env" onclick="Terminal.init()">
+          ▶️ Iniciar Ambiente
+        </button>
+        <button class="btn btn-secondary" onclick="Terminal.clear()">
+          🗑️ Limpar
+        </button>
+      </div>
+    </div>
+
+    <div class="terminal-layout">
+
+      <!-- Terminal principal -->
+      <div style="display:flex; flex-direction:column; gap:10px;">
+
+        <!-- Janela do terminal -->
+        <div class="terminal-window">
+          <div class="terminal-titlebar">
+            <div class="terminal-dot red"></div>
+            <div class="terminal-dot yellow"></div>
+            <div class="terminal-dot green"></div>
+            <div class="terminal-title" id="terminal-title">
+              ProjetoLens Terminal — aguardando inicialização
+            </div>
+            <div class="terminal-titlebar-actions">
+              <button class="btn btn-secondary" style="padding:2px 8px; font-size:11px;"
+                      onclick="Terminal.copyOutput()">📋</button>
+              <button class="btn btn-secondary" style="padding:2px 8px; font-size:11px;"
+                      onclick="Terminal.saveLog()">💾</button>
+            </div>
+          </div>
+
+          <div class="terminal-output" id="terminal-output">
+            <div class="t-line">
+              <span class="t-info">
+                ╔══════════════════════════════════════════╗<br>
+                &nbsp;║&nbsp;&nbsp; ProjetoLens Terminal v1.0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;║<br>
+                &nbsp;║&nbsp;&nbsp; Ambiente Node.js no navegador &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;║<br>
+                &nbsp;╚══════════════════════════════════════════╝
+              </span>
+            </div>
+            <div class="t-line" style="margin-top:8px;">
+              <span class="t-dim">Clique em "Iniciar Ambiente" para começar</span>
+            </div>
+            <div class="t-line">
+              <span class="t-dim">Digite "help" para ver os comandos disponíveis</span>
+            </div>
+          </div>
+
+          <!-- Barra de input -->
+          <div class="terminal-input-bar">
+            <span class="terminal-input-prompt" id="terminal-prompt">$</span>
+            <input
+              type="text"
+              class="terminal-input"
+              id="terminal-input"
+              placeholder="Digite um comando..."
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              onkeydown="Terminal.handleKey(event)"
+            >
+            <button class="btn btn-primary" style="padding:4px 12px; font-size:12px;"
+                    onclick="Terminal.runInput()">
+              ▶
+            </button>
+          </div>
+        </div>
+
+        <!-- Comandos rápidos -->
+        <div class="card">
+          <div class="card-title">⚡ Comandos Rápidos</div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:4px;">
+            <div class="quick-cmd" onclick="Terminal.runCmd('npm run dev')">
+              <span class="qc-icon">🚀</span>
+              <span class="qc-label">Iniciar servidor</span>
+              <span class="qc-code">npm run dev</span>
+            </div>
+            <div class="quick-cmd" onclick="Terminal.runCmd('npm install')">
+              <span class="qc-icon">📦</span>
+              <span class="qc-label">Instalar deps</span>
+              <span class="qc-code">npm install</span>
+            </div>
+            <div class="quick-cmd" onclick="Terminal.runCmd('npm run build')">
+              <span class="qc-icon">🔨</span>
+              <span class="qc-label">Build</span>
+              <span class="qc-code">npm run build</span>
+            </div>
+            <div class="quick-cmd" onclick="Terminal.runCmd('npm test')">
+              <span class="qc-icon">🧪</span>
+              <span class="qc-label">Rodar testes</span>
+              <span class="qc-code">npm test</span>
+            </div>
+            <div class="quick-cmd" onclick="Terminal.runCmd('npm run lint')">
+              <span class="qc-icon">🔍</span>
+              <span class="qc-label">Lint</span>
+              <span class="qc-code">npm run lint</span>
+            </div>
+            <div class="quick-cmd" onclick="Terminal.runCmd('git status')">
+              <span class="qc-icon">🐙</span>
+              <span class="qc-label">Git status</span>
+              <span class="qc-code">git status</span>
+            </div>
+            <div class="quick-cmd" onclick="Terminal.runCmd('git log --oneline -10')">
+              <span class="qc-icon">📜</span>
+              <span class="qc-label">Git log</span>
+              <span class="qc-code">git log</span>
+            </div>
+            <div class="quick-cmd" onclick="Terminal.runCmd('ls -la')">
+              <span class="qc-icon">📁</span>
+              <span class="qc-label">Listar arquivos</span>
+              <span class="qc-code">ls -la</span>
+            </div>
+            <div class="quick-cmd" onclick="Terminal.runCmd('node --version && npm --version')">
+              <span class="qc-icon">ℹ️</span>
+              <span class="qc-label">Versões</span>
+              <span class="qc-code">node -v</span>
+            </div>
+            <div class="quick-cmd" onclick="Terminal.runCmd('npm outdated')">
+              <span class="qc-icon">🔄</span>
+              <span class="qc-label">Deps desatualizadas</span>
+              <span class="qc-code">npm outdated</span>
+            </div>
+            <div class="quick-cmd" onclick="Terminal.runCmd('npm audit')">
+              <span class="qc-icon">🔒</span>
+              <span class="qc-label">Auditoria</span>
+              <span class="qc-code">npm audit</span>
+            </div>
+            <div class="quick-cmd" onclick="Terminal.runCmd('cat package.json')">
+              <span class="qc-icon">📋</span>
+              <span class="qc-label">Ver package.json</span>
+              <span class="qc-code">cat pkg</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sidebar -->
+      <div class="terminal-sidebar">
+
+        <!-- Status do ambiente -->
+        <div class="card">
+          <div class="card-title">🖥️ Ambiente</div>
+          <div style="display:flex; flex-direction:column; gap:6px; font-size:12px;">
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-muted)">Node.js</span>
+              <span id="env-node-ver" class="version-badge">—</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-muted)">npm</span>
+              <span id="env-npm-ver" class="version-badge">—</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-muted)">Projeto</span>
+              <span id="env-project" class="version-badge" style="max-width:120px; overflow:hidden; text-overflow:ellipsis;">—</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-muted)">Diretório</span>
+              <span id="env-cwd" class="version-badge">~/projeto</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Busca NPM -->
+        <div class="npm-search-box">
+          <div class="npm-search-header">📦 Buscar Pacote NPM</div>
+          <div class="npm-search-input-wrap">
+            <span style="color:var(--text-muted); font-size:14px;">🔍</span>
+            <input
+              type="text"
+              class="npm-search-input"
+              id="npm-search-input"
+              placeholder="ex: express, axios..."
+              onkeydown="if(event.key==='Enter') NpmSearch.search()"
+            >
+            <button class="btn btn-primary" style="padding:3px 10px; font-size:11px;"
+                    onclick="NpmSearch.search()">
+              Buscar
+            </button>
+          </div>
+          <div id="npm-results" style="max-height:400px; overflow-y:auto;">
+            <div style="padding:16px; text-align:center; color:var(--text-muted); font-size:12px;">
+              Digite o nome de um pacote e pressione Enter
+            </div>
+          </div>
+        </div>
+
+        <!-- Histórico -->
+        <div class="card">
+          <div class="card-title">🕐 Histórico</div>
+          <div id="cmd-history" style="display:flex; flex-direction:column; gap:2px; max-height:200px; overflow-y:auto;">
+            <div style="font-size:12px; color:var(--text-muted); padding:4px;">Nenhum comando executado</div>
+          </div>
+          <button class="btn btn-secondary" style="width:100%; margin-top:8px; font-size:11px;"
+                  onclick="Terminal.clearHistory()">
+            🗑️ Limpar histórico
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="module-panel" id="panel-mapa"></div>
+      <div class="module-panel" id="panel-previa"></div>
+      <div class="module-panel" id="panel-comparar"></div>
+      <div class="module-panel" id="panel-ferramentas"></div>
+      <div class="module-panel" id="panel-termux"></div>
+      <div class="module-panel" id="panel-desmontar"></div>
+
+    </div><!-- fim modules-container -->
+  </main>
+
+</div><!-- fim app -->
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<!-- Modal -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <div id="modal-title">
+      <span id="modal-title-text">Título</span>
+      <button id="modal-close" onclick="Shell.closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- Barra de status inferior -->
+<div id="statusbar">
+  <div class="sb-item">🔬 Laboratório</div>
+  <div class="sb-item"><span class="status-dot" id="sb-dot"></span> <span id="sb-project">Nenhum projeto</span></div>
+  <div class="sb-item" id="sb-module">📍 Início</div>
+  <div class="sb-spacer"></div>
+  <div class="sb-item" id="sb-files">📄 0 arquivos</div>
+  <div class="sb-item" id="sb-deps">🧩 0 deps</div>
+  <div class="sb-item" id="sb-bugs">🐛 0 bugs</div>
+  <div class="sb-item" id="sb-time"></div>
+</div>
+<!-- Padding para a statusbar não cobrir conteúdo -->
+<script src="lib/jszip.min.js"></script>
+<script src="lib/pako.min.js"></script>
+<script src="lib/acorn.min.js"></script>
+<script src="js/00-casca.js"></script>
+<script src="js/02-importar.js"></script>
+<script src="js/03-dependencias.js"></script>
+<script src="js/04-analisar.js"></script>
+<script src="js/05a-markdown.js"></script>
+<script src="js/05-plano.js"></script>
+<script src="js/06-scripts.js"></script>
+<script src="js/06b-scripts-fim.js"></script>
+<script src="js/07a-busca-npm.js"></script>
+<script src="js/07-terminal.js"></script>
+<script src="js/08-exportar.js"></script>
+<script src="js/09-integracao.js"></script>
+<script src="js/10-celular.js"></script>
+<script src="js/11-lab-base.js"></script>
+<script src="js/12-lab-mapa.js"></script>
+<script src="js/13-lab-previa.js"></script>
+<script src="js/14-lab-pesquisa.js"></script>
+<script src="js/15a-tar.js"></script>
+<script src="js/15-lab-comparar.js"></script>
+<script src="js/16-lab-ferramentas.js"></script>
+<script src="js/17-lab-termux.js"></script>
+<script src="js/18-lab-desmontar.js"></script>
+</body>
+</html>

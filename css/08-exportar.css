@@ -1,0 +1,186 @@
+
+/* ===== EXPORTADOR MODULE ===== */
+.exporter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+/* Card de exportação */
+.export-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.export-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.export-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.export-card.green::before  { background: var(--accent-green); }
+.export-card.blue::before   { background: var(--accent); }
+.export-card.purple::before { background: var(--accent-purple); }
+.export-card.yellow::before { background: var(--accent-yellow); }
+.export-card.red::before    { background: var(--accent-red); }
+.export-card.teal::before   { background: #39d0d0; }
+
+.export-card-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+.export-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.export-card-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  flex: 1;
+}
+.export-card-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.export-meta-tag {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+.export-card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* Progresso de exportação */
+.export-progress-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: none;
+  margin-bottom: 16px;
+}
+.export-progress-wrap.visible { display: block; }
+.export-progress-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Lista de arquivos a exportar */
+.export-file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.export-file-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  transition: background var(--transition);
+}
+.export-file-item:hover { background: var(--bg-hover); }
+.export-file-item .efi-icon { font-size: 14px; flex-shrink: 0; }
+.export-file-item .efi-name {
+  flex: 1;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+.export-file-item .efi-size {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.export-file-item .efi-status {
+  font-size: 11px;
+  width: 16px;
+  text-align: center;
+}
+
+/* Resumo da sessão */
+.session-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.session-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  text-align: center;
+}
+.session-card .sc-val {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+.session-card .sc-lbl {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Opções de exportação ZIP */
+.zip-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.zip-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color var(--transition);
+}
+.zip-option:hover { color: var(--text-primary); }
+
+/* Histórico de exportações */
+.export-history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  margin-bottom: 6px;
+}
+.ehi-icon  { font-size: 18px; flex-shrink: 0; }
+.ehi-name  { flex: 1; font-family: var(--font-mono); color: var(--text-secondary); }
+.ehi-size  { color: var(--text-muted); font-size: 11px; }
+.ehi-time  { color: var(--text-muted); font-size: 11px; }

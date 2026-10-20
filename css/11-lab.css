@@ -1,0 +1,77 @@
+/* 11-lab.css — visual das telas do Laboratório (Mapa, Prévia) */
+.lab-topo h2 { margin: 0 0 4px; font-size: 22px; }
+.lab-mut { color: var(--text-secondary); }
+.lab-aviso { background: var(--bg-card); border-left: 4px solid var(--accent-yellow, #d29922); padding: 10px 12px; border-radius: 8px; }
+.lab-linha { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; align-items: center; }
+.lab-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin: 12px 0; }
+.lab-num { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
+.lab-num b { display: block; font-size: 24px; } .lab-num span { font-size: 13px; color: var(--text-secondary); }
+.lab-num.ruim b { color: var(--accent-red); }
+.lab-h3 { font-size: 16px; margin: 16px 0 6px; overflow-wrap: anywhere; }
+.lab-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.lab-chip { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: 99px; padding: 8px 12px; min-height: 40px; cursor: pointer; font: inherit; font-size: 14px; }
+.lab-chip.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.lab-chip small { opacity: .7; }
+.lab-mini { background: transparent; color: var(--accent); border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; cursor: pointer; font-size: 12px; }
+.lab-grade { display: grid; grid-template-columns: minmax(220px, 1fr) 2fr; gap: 12px; margin-top: 12px; }
+.lab-coluna { min-width: 0; }
+.lab-busca { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-primary); font: inherit; }
+.lab-lista { display: flex; flex-direction: column; gap: 3px; max-height: 60vh; overflow-y: auto; margin-top: 8px; }
+.lab-item { display: flex; justify-content: space-between; gap: 8px; text-align: left; background: var(--bg-card); color: var(--text-primary); border: 1px solid transparent; border-radius: 8px; padding: 8px 10px; cursor: pointer; font: inherit; font-size: 13px; overflow-wrap: anywhere; }
+.lab-item.on { border-color: var(--accent); }
+.lab-item small { color: var(--text-secondary); flex: none; }
+.lab-ul { margin: 4px 0 10px; padding-left: 18px; } .lab-ul li { margin: 3px 0; overflow-wrap: anywhere; }
+.lab-ul a { color: var(--accent); }
+.lab-pre { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 10px; overflow: auto; font-size: 12px; white-space: pre; max-height: 40vh; }
+.lab-det { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin: 10px 0; }
+.lab-det summary { cursor: pointer; font-weight: 600; }
+.lab-op { display: inline-flex; gap: 6px; align-items: center; margin-right: 10px; } .lab-op input { width: 20px; height: 20px; }
+.lab-area { width: 100%; min-height: 140px; font: 13px/1.4 monospace; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary, #0d1117); color: var(--text-primary); margin: 8px 0; }
+.lab-moldura { margin: 10px auto; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; }
+.lab-moldura.cel { max-width: 400px; } .lab-moldura.largo { max-width: 100%; }
+.lab-moldura iframe { width: 100%; height: 70vh; border: 0; display: block; background: #fff; }
+.lab-console { background: #0b0e14; color: #c9d1d9; font: 12px/1.5 monospace; border-radius: 8px; padding: 8px 10px; max-height: 30vh; overflow: auto; }
+.lab-console .lc-error { color: #ff7b72; } .lab-console .lc-warn { color: #e3b341; }
+@media (max-width: 760px) { .lab-grade { grid-template-columns: 1fr; } .lab-lista { max-height: 40vh; } }
+
+/* tabelas do terminal (comparar) ficam alinhadas */
+.terminal-output .t-line { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* ⚖️ Comparar */
+.cmp-mais { color: #3fb950; } .cmp-menos { color: #f85149; }
+.lab-ok { color: #3fb950; font-weight: 600; }
+.cmp-bloco { border: 1px solid var(--border); border-radius: 8px; margin: 8px 0; overflow-x: auto; background: #0b0e14; }
+.cmp-onde { font-size: 12px; color: var(--text-secondary); padding: 4px 8px; border-bottom: 1px solid var(--border); }
+.cmp-l { display: flex; font: 12px/1.5 monospace; white-space: pre; min-width: max-content; }
+.cmp-n { width: 3.2em; flex: none; text-align: right; padding-right: 6px; color: #6e7681; user-select: none; }
+.cmp-s { padding-right: 10px; color: #c9d1d9; }
+.cmp-mais.cmp-l, .cmp-l.cmp-mais { background: rgba(46,160,67,.18); } .cmp-l.cmp-mais .cmp-s { color: #7ee787; }
+.cmp-l.cmp-menos { background: rgba(248,81,73,.16); } .cmp-l.cmp-menos .cmp-s { color: #ffa198; }
+
+/* 🧰 Ferramentas */
+.ferr-grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin: 12px 0; }
+.ferr-card { display: flex; flex-direction: column; gap: 4px; text-align: left; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: 14px; padding: 14px; cursor: pointer; font: inherit; }
+.ferr-card:hover { border-color: var(--accent); }
+.ferr-card small { color: var(--text-secondary); line-height: 1.4; }
+.ferr-ic { font-size: 26px; }
+.ferr-kits { display: flex; flex-direction: column; gap: 8px; }
+.ferr-kit { display: flex; gap: 10px; align-items: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; }
+.ferr-kit > div { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.ferr-barra { position: sticky; top: 0; z-index: 2; background: var(--bg-primary, #0d1117); padding: 4px 0; }
+.ferr-quadro { width: 100%; height: calc(100vh - var(--header-height) - 120px); min-height: 480px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+@media (max-width: 760px) { .ferr-kit { flex-wrap: wrap; } .ferr-quadro { height: calc(100vh - var(--header-height) - 100px); } }
+
+/* 📱 Termux */
+.tx-status { margin: 6px 0; font-weight: 600; } .tx-status.ok { color: var(--accent-green); } .tx-status.erro { color: var(--accent-red); }
+.tx-term { height: 55vh; min-height: 300px; background: #07110d; border-radius: 10px; padding: 6px; overflow: hidden; margin: 8px 0; }
+.tx-pre { height: calc(100% - 56px); margin: 0; overflow: auto; color: #d7f5e3; font: 13px/1.4 monospace; white-space: pre-wrap; }
+.ferr-grupo { margin-top: 18px; }
+
+/* o que está escondido fica escondido (o .btn do ProjetoLens ganhava do "hidden") */
+[hidden] { display: none !important; }
+
+/* 🔪 Desmontar */
+.dm-cores { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin: 8px 0; }
+.dm-cor { display: flex; gap: 10px; align-items: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 8px; overflow-wrap: anywhere; }
+.dm-cor input[type=color] { width: 44px; height: 44px; border: 0; background: none; padding: 0; flex: none; cursor: pointer; }
+.lab-det summary small { font-weight: 400; }

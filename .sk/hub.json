@@ -1,0 +1,87 @@
+{
+  "titulo": "Laboratorio-modular-c",
+  "arquivo": "hub.html",
+  "itens": [
+    {
+      "path": "ferramentas/ai-code-studio.html",
+      "nome": "AI Code Studio",
+      "desc": "",
+      "on": false,
+      "icone": ""
+    },
+    {
+      "path": "ferramentas/arrumador.html",
+      "nome": "Arrumador de Backups",
+      "desc": "",
+      "on": false,
+      "icone": ""
+    },
+    {
+      "path": "ferramentas/colador.html",
+      "nome": "Colador de Links",
+      "desc": "",
+      "on": false,
+      "icone": ""
+    },
+    {
+      "path": "ferramentas/faxina.html",
+      "nome": "🧹 Faxina de Repetidos",
+      "desc": "",
+      "on": false,
+      "icone": ""
+    },
+    {
+      "path": "ferramentas/iara-suite.html",
+      "nome": "Iara Suite — Code Editor · APK Builder · Site Extractor",
+      "desc": "",
+      "on": false,
+      "icone": ""
+    },
+    {
+      "path": "ferramentas/juntador.html",
+      "nome": "Juntador de Arquivos",
+      "desc": "",
+      "on": false,
+      "icone": ""
+    },
+    {
+      "path": "ferramentas/numerador.html",
+      "nome": "Numerador de Códigos",
+      "desc": "",
+      "on": false,
+      "icone": ""
+    },
+    {
+      "path": "ferramentas/preparador.html",
+      "nome": "Preparador Universal",
+      "desc": "",
+      "on": false,
+      "icone": ""
+    },
+    {
+      "path": "ferramentas/projeto-lab.html",
+      "nome": "Projeto Lab",
+      "desc": "",
+      "on": false,
+      "icone": ""
+    },
+    {
+      "path": "ferramentas/replicador.html",
+      "nome": "Replicador de Projeto",
+      "desc": "",
+      "on": false,
+      "icone": ""
+    },
+    {
+      "path": "index.html",
+      "nome": "🔬 Laboratório",
+      "desc": "",
+      "on": true,
+      "icone": "icons/icon.svg"
+    }
+  ],
+  "sub": "",
+  "logo": "",
+  "tema": "escuro",
+  "links": []
+}

@@ -1,0 +1,242 @@
+
+/* ===== IMPORTADOR ===== */
+#drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  background: var(--bg-card);
+  position: relative;
+}
+#drop-zone:hover, #drop-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--bg-active);
+  transform: scale(1.01);
+}
+#drop-zone .dz-icon { font-size: 48px; margin-bottom: 12px; }
+#drop-zone .dz-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+#drop-zone .dz-sub { color: var(--text-secondary); font-size: 13px; margin-bottom: 20px; }
+#drop-zone .dz-formats {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  justify-content: center; margin-bottom: 20px;
+}
+#drop-zone .dz-formats span {
+  background: var(--bg-hover); border: 1px solid var(--border);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 11px; color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+#drop-zone input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+
+.import-btn-row {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;
+}
+
+/* ===== PROGRESS ===== */
+#import-progress {
+  display: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-top: 16px;
+}
+#import-progress.visible { display: block; }
+.progress-bar-wrap {
+  background: var(--bg-hover);
+  border-radius: 4px; height: 8px;
+  overflow: hidden; margin: 10px 0;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-purple));
+  border-radius: 4px;
+  transition: width 0.2s ease;
+  width: 0%;
+}
+#progress-text { font-size: 12px; color: var(--text-secondary); }
+#progress-log {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  max-height: 120px;
+  overflow-y: auto;
+  background: var(--bg-main);
+  border-radius: var(--radius);
+  padding: 8px;
+  margin-top: 8px;
+}
+
+/* ===== EXPLORADOR ===== */
+#explorer-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 16px;
+  height: calc(100vh - 140px);
+}
+
+#file-tree-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#file-tree-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+#file-tree-search {
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 5px 10px;
+  color: var(--text-primary);
+  font-size: 12px;
+  width: 100%;
+  margin: 8px;
+  width: calc(100% - 16px);
+  font-family: var(--font-main);
+}
+#file-tree-search:focus { outline: none; border-color: var(--accent); }
+
+#file-tree-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+}
+.tree-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+.tree-item.active { background: var(--bg-active); color: var(--accent-hover); }
+.tree-item.is-dir { color: var(--accent-yellow); font-weight: 500; }
+.tree-item .tree-icon { flex-shrink: 0; }
+.tree-item .tree-name { overflow: hidden; text-overflow: ellipsis; }
+.tree-item .tree-size {
+  margin-left: auto; font-size: 10px;
+  color: var(--text-muted); flex-shrink: 0;
+}
+
+/* ===== EDITOR DE ARQUIVO ===== */
+#file-viewer-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#file-viewer-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+#file-viewer-path {
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  font-size: 11px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#file-viewer-content {
+  flex: 1;
+  overflow: auto;
+  padding: 0;
+}
+
+#file-viewer-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  gap: 12px;
+  font-size: 13px;
+}
+
+#code-display {
+  margin: 0;
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  white-space: pre;
+  overflow: auto;
+  min-height: 100%;
+  tab-size: 2;
+  background: var(--bg-main);
+}
+
+/* Syntax highlight básico */
+.kw  { color: #ff7b72; }
+.str { color: #a5d6ff; }
+.cmt { color: #8b949e; font-style: italic; }
+.num { color: #79c0ff; }
+.fn  { color: #d2a8ff; }
+.tag { color: #7ee787; }
+.atr { color: #79c0ff; }
+
+/* ===== STATS DO PROJETO ===== */
+#project-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.stat-card .stat-val {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.stat-card .stat-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.stat-card .stat-icon { font-size: 20px; margin-bottom: 4px; }

@@ -1,0 +1,232 @@
+
+/* ===== PLANNER MODULE ===== */
+.planner-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+  min-height: calc(100vh - 160px);
+}
+
+/* Painel lateral de opções */
+.planner-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.planner-option-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+}
+
+.planner-option-card .poc-title {
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.6px;
+  color: var(--text-muted); margin-bottom: 10px;
+}
+
+.planner-toggle {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px; color: var(--text-secondary);
+  cursor: pointer;
+}
+.planner-toggle:last-child { border-bottom: none; }
+.planner-toggle:hover { color: var(--text-primary); }
+
+/* Toggle switch */
+.toggle-sw {
+  width: 32px; height: 18px;
+  background: var(--bg-hover);
+  border-radius: 9px; position: relative;
+  transition: background var(--transition);
+  flex-shrink: 0; cursor: pointer;
+  border: 1px solid var(--border);
+}
+.toggle-sw::after {
+  content: '';
+  position: absolute;
+  width: 12px; height: 12px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: all var(--transition);
+}
+.toggle-sw.on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.toggle-sw.on::after {
+  background: white;
+  left: 16px;
+}
+
+/* Área do plano gerado */
+.planner-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Tabs do plano */
+.plan-type-tabs {
+  display: flex; gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+}
+.plan-type-tab {
+  flex: 1; padding: 8px 12px;
+  border-radius: var(--radius);
+  border: none; background: none;
+  color: var(--text-secondary);
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all var(--transition);
+  font-family: var(--font-main);
+  text-align: center;
+}
+.plan-type-tab:hover { color: var(--text-primary); background: var(--bg-hover); }
+.plan-type-tab.active {
+  background: var(--accent);
+  color: white;
+}
+
+/* Seções do plano */
+.plan-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.plan-section-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.plan-section-header:hover { background: var(--bg-hover); }
+.plan-section-title {
+  font-size: 14px; font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+}
+.plan-section-actions {
+  display: flex; gap: 6px;
+}
+.plan-section-body {
+  padding: 16px;
+}
+
+/* Editor de markdown */
+.md-editor {
+  width: 100%;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
+  padding: 12px;
+  resize: vertical;
+  min-height: 200px;
+  transition: border-color var(--transition);
+}
+.md-editor:focus { outline: none; border-color: var(--accent); }
+
+/* Preview markdown */
+.md-preview {
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  max-height: 500px;
+  overflow-y: auto;
+}
+.md-preview h1 { font-size: 20px; font-weight: 700; margin: 0 0 12px; color: var(--accent-hover); border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.md-preview h2 { font-size: 16px; font-weight: 700; margin: 16px 0 8px; color: var(--text-primary); }
+.md-preview h3 { font-size: 14px; font-weight: 600; margin: 12px 0 6px; color: var(--accent); }
+.md-preview h4 { font-size: 13px; font-weight: 600; margin: 10px 0 4px; color: var(--text-secondary); }
+.md-preview p  { margin: 0 0 8px; }
+.md-preview ul, .md-preview ol { margin: 0 0 8px; padding-left: 20px; }
+.md-preview li { margin-bottom: 3px; }
+.md-preview code { background: var(--bg-hover); border-radius: 3px; padding: 1px 5px; font-family: var(--font-mono); font-size: 11px; color: var(--accent-purple); }
+.md-preview pre { background: var(--bg-hover); border-radius: var(--radius); padding: 12px; overflow-x: auto; margin: 8px 0; }
+.md-preview pre code { background: none; padding: 0; }
+.md-preview blockquote { border-left: 3px solid var(--accent); padding-left: 12px; color: var(--text-secondary); margin: 8px 0; }
+.md-preview table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+.md-preview th { background: var(--bg-hover); padding: 6px 10px; text-align: left; border: 1px solid var(--border); }
+.md-preview td { padding: 5px 10px; border: 1px solid var(--border); }
+.md-preview strong { color: var(--text-primary); font-weight: 700; }
+.md-preview hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+.md-preview a { color: var(--accent); }
+
+/* Módulos do plano modular */
+.module-plan-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.module-plan-header {
+  display: flex; align-items: center;
+  gap: 10px; padding: 12px 16px;
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.module-plan-num {
+  width: 26px; height: 26px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: white;
+  flex-shrink: 0;
+}
+.module-plan-title { font-size: 14px; font-weight: 600; flex: 1; }
+.module-plan-body  { padding: 14px 16px; }
+
+/* Barra de progresso de geração */
+.gen-progress {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: none;
+}
+.gen-progress.visible { display: block; }
+
+/* Partes exportáveis */
+.export-parts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.export-part-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.export-part-card .epc-title {
+  font-size: 12px; font-weight: 600;
+  color: var(--text-primary);
+}
+.export-part-card .epc-size {
+  font-size: 11px; color: var(--text-muted);
+}
+.export-part-card .epc-actions {
+  display: flex; gap: 6px;
+}

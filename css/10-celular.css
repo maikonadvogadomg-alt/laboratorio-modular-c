@@ -1,0 +1,18 @@
+/* 10-celular.css — feito na montagem: o ProjetoLens no celular.
+   A barra lateral sai do caminho e abre pelo ☰ (por cima da tela). */
+#app.sem-menu { grid-template-columns: 0 1fr; }
+@media (max-width: 760px) {
+  #app { grid-template-columns: 1fr !important; grid-template-areas: "header" "main" !important; }
+  #sidebar { position: fixed; top: var(--header-height); bottom: 24px; left: 0; width: min(78vw, 280px); z-index: 50;
+             transform: translateX(-102%); transition: transform .2s ease; box-shadow: 4px 0 24px rgba(0,0,0,.45); }
+  body.menu-aberto #sidebar { transform: none; }
+  body.menu-aberto::after { content: ''; position: fixed; inset: var(--header-height) 0 24px 0; background: rgba(0,0,0,.45); z-index: 40; }
+  #btn-toggle-sidebar { font-size: 24px; padding: 6px 10px; min-width: 44px; min-height: 44px; }
+  .welcome-grid { grid-template-columns: 1fr !important; }
+  #statusbar { overflow-x: auto; white-space: nowrap; gap: 10px; }
+  #statusbar .sb-item { flex: none; }
+  .module-panel { padding: 12px !important; }
+  #sidebar .nav-label, #sidebar .sidebar-section-title { display: block !important; }
+  #sidebar .nav-item { display: flex !important; justify-content: flex-start !important; gap: 10px; min-height: 46px; }
+  input, select, textarea { font-size: 16px; } /* o celular não dá zoom sozinho ao tocar */
+}

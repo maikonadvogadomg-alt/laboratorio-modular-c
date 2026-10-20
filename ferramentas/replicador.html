@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Replicador de Projeto</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d1117;--sf:#161b22;--sf2:#1c2128;--bd:#30363d;--tx:#e6edf3;--mu:#8b949e;
+  --bl:#58a6ff;--gr:#3fb950;--rd:#f85149;--yl:#d29922;}
+body{background:var(--bg);color:var(--tx);font-family:system-ui,sans-serif;min-height:100dvh;}
+
+/* Layout */
+#app{display:flex;flex-direction:column;height:100dvh;}
+#topbar{display:flex;align-items:center;gap:8px;padding:0 12px;height:44px;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0;}
+.logo{font-size:14px;font-weight:700;color:var(--bl);margin-right:6px;}
+.tb-btn{background:none;border:none;color:var(--mu);padding:5px 10px;border-radius:5px;font-size:13px;cursor:pointer;border-bottom:2px solid transparent;height:44px;}
+.tb-btn.active{color:var(--tx);border-bottom-color:var(--bl);}
+.tb-btn:hover:not(.active){background:var(--sf2);}
+#topbar-right{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mu);}
+
+#main{display:flex;flex:1;overflow:hidden;}
+
+/* Painel lateral — lista de arquivos */
+#file-panel{width:240px;flex-shrink:0;border-right:1px solid var(--bd);display:flex;flex-direction:column;background:var(--sf);}
+#file-panel.hidden{display:none;}
+.fp-hdr{padding:7px 8px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.fp-hdr input{flex:1;background:var(--sf2);border:1px solid var(--bd);color:var(--tx);border-radius:5px;padding:4px 8px;font-size:12px;outline:none;}
+.fp-hdr input:focus{border-color:var(--bl);}
+#file-list{flex:1;overflow-y:auto;}
+.fi{display:flex;align-items:center;gap:5px;padding:5px 8px;cursor:pointer;font-size:11px;border-bottom:1px solid #21262d;color:var(--mu);}
+.fi:hover,.fi.active{background:var(--sf2);color:var(--tx);}
+.fi-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fi-lines{font-size:10px;color:var(--mu);flex-shrink:0;}
+
+/* Seções */
+#content{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.section{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.section.active{display:flex;}
+
+/* Viewer de arquivo */
+#sec-viewer{flex-direction:row;}
+.viewer-meta{padding:8px 12px;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0;font-size:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.viewer-meta span{color:var(--mu);}
+.viewer-meta strong{color:var(--tx);}
+textarea.viewer{flex:1;background:#0a0e14;color:var(--tx);border:none;resize:none;padding:12px;font-family:'Courier New',monospace;font-size:12px;line-height:1.6;outline:none;tab-size:2;}
+
+/* Análise */
+#sec-analysis{overflow-y:auto;}
+.ana-wrap{padding:14px;max-width:900px;}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:8px;margin-bottom:14px;}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--bd);}
+.card-hdr h3{font-size:13px;font-weight:600;}
+.card-body{padding:12px 13px;}
+.dep-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #21262d;font-size:12px;}
+.dep-name{font-family:monospace;color:var(--bl);min-width:200px;word-break:break-all;}
+.dep-ver{color:var(--gr);min-width:70px;font-family:monospace;}
+.dep-type{font-size:10px;padding:2px 6px;border-radius:4px;flex-shrink:0;}
+.dep-desc{color:var(--mu);flex:1;font-size:11px;}
+textarea.code-out{width:100%;background:#0a0e14;border:1px solid var(--bd);color:var(--tx);border-radius:6px;padding:10px;font-size:12px;font-family:'Courier New',monospace;resize:vertical;outline:none;line-height:1.5;}
+.cmd-row{display:flex;align-items:center;gap:8px;background:#0a0e14;border-radius:5px;padding:7px 10px;margin-bottom:4px;}
+.cmd-row code{flex:1;font-family:monospace;font-size:12px;color:var(--gr);}
+.cmd-row.comment code{color:var(--mu);}
+.cmd-copy{background:none;border:none;color:var(--mu);cursor:pointer;font-size:11px;}
+.cmd-copy:hover{color:var(--tx);}
+.cmd-section{margin-bottom:12px;}
+.cmd-section h4{font-size:12px;color:var(--yl);margin-bottom:6px;padding-left:4px;}
+.stats{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px;}
+.stat{text-align:center;background:#0a0e14;border-radius:6px;padding:10px 16px;}
+.stat .n{font-size:20px;font-weight:700;color:var(--bl);}
+.stat .l{font-size:11px;color:var(--mu);margin-top:2px;}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin:2px;background:var(--sf2);color:var(--tx);}
+
+/* Chat IA */
+#sec-chat{flex-direction:column;}
+.chat-toolbar{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0;flex-wrap:wrap;}
+#chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;}
+.bubble{padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.6;max-width:88%;}
+.bubble.user{background:var(--sf2);border-left:3px solid var(--bl);align-self:flex-end;}
+.bubble.ai{background:var(--sf);border-left:3px solid var(--gr);}
+.bubble.ai pre{background:#0a0e14;padding:8px;border-radius:4px;overflow-x:auto;margin:6px 0;font-size:12px;}
+.bubble.ai code{font-family:monospace;font-size:12px;background:#0a0e14;padding:1px 5px;border-radius:3px;}
+.chat-inp{padding:8px;background:var(--sf);border-top:1px solid var(--bd);flex-shrink:0;}
+.chat-inp-row{display:flex;gap:6px;}
+#chat-input{flex:1;resize:none;padding:8px;border-radius:6px;font-size:13px;min-height:38px;max-height:120px;background:#0a0e14;border:1px solid var(--bd);color:var(--tx);outline:none;font-family:inherit;}
+#chat-input:focus{border-color:var(--bl);}
+
+/* Drop */
+#drop-overlay{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.drop{border:2px dashed var(--bd);border-radius:10px;padding:48px 32px;text-align:center;cursor:pointer;transition:.2s;width:100%;max-width:500px;}
+.drop:hover,.drop.over{border-color:var(--bl);background:#0d1f40;}
+
+/* Buttons */
+.btn{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;border:none;cursor:pointer;}
+.btn:hover{opacity:.85;}
+.btn-blue{background:#1f6feb;color:#fff;}
+.btn-green{background:#238636;color:#fff;}
+.btn-gray{background:var(--sf2);color:var(--tx);border:1px solid var(--bd);}
+select{background:var(--sf2);border:1px solid var(--bd);color:var(--tx);border-radius:5px;padding:4px 8px;font-size:12px;}
+
+/* Misc */
+.dot-anim span{animation:blink 1.2s infinite;display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gr);margin:0 1px;}
+.dot-anim span:nth-child(2){animation-delay:.2s;}.dot-anim span:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px;}
+#toast{display:none;position:fixed;bottom:20px;right:20px;padding:8px 16px;border-radius:6px;font-size:13px;color:#fff;background:var(--gr);z-index:999;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <span class="logo">⚡ Replicador</span>
+  <button class="tb-btn active" onclick="goTab('drop')" id="tb-drop">📦 Importar</button>
+  <button class="tb-btn" onclick="goTab('viewer')" id="tb-viewer">📄 Arquivos</button>
+  <button class="tb-btn" onclick="goTab('analysis')" id="tb-analysis">🔍 Análise</button>
+  <button class="tb-btn" onclick="goTab('chat')" id="tb-chat">🤖 Assistente IA</button>
+  <div id="topbar-right">
+    <span id="proj-badge"></span>
+    <button class="btn btn-gray" style="font-size:11px;" onclick="document.getElementById('zip-in').click()">+ Novo ZIP</button>
+  </div>
+</div>
+
+<div id="main">
+  <!-- Painel de arquivos (lateral) -->
+  <div id="file-panel" class="hidden">
+    <div class="fp-hdr">
+      <input type="text" id="file-search" placeholder="🔍 buscar arquivo..." oninput="filterFiles()">
+      <button class="btn btn-gray" style="font-size:11px;padding:3px 7px;" onclick="toggleFilePanel()">✕</button>
+    </div>
+    <div id="file-list"></div>
+  </div>
+
+  <div id="content">
+
+    <!-- DROP -->
+    <div id="sec-drop" class="section active">
+      <div id="drop-overlay">
+        <div class="drop" id="drop" onclick="document.getElementById('zip-in').click()">
+          <div style="font-size:48px;margin-bottom:12px;">📦</div>
+          <h2 style="font-size:16px;font-weight:700;margin-bottom:6px;">Importe o ZIP do projeto</h2>
+          <p style="font-size:13px;color:var(--mu);margin-bottom:16px;">Arraste ou clique — analisa todos os arquivos sem limite</p>
+          <div style="font-size:12px;color:var(--mu);line-height:1.8;">
+            ✅ Lê TODOS os arquivos completos (sem truncar)<br>
+            ✅ Busca versões das deps no npm.org ao vivo<br>
+            ✅ Gera package.json e comandos por etapa<br>
+            ✅ IA assistente com contexto do projeto
+          </div>
+        </div>
+        <p style="margin-top:16px;font-size:12px;color:var(--mu);">Suporta projetos React, Expo, Electron, Next.js, Express...</p>
+      </div>
+    </div>
+
+    <!-- VIEWER -->
+    <section id="sec-viewer" class="section">
+      <div class="viewer-meta">
+        <button class="btn btn-gray" style="font-size:11px;" onclick="toggleFilePanel()">☰ Arquivos</button>
+        <strong id="viewer-fname">nenhum arquivo</strong>
+        <span id="viewer-info"></span>
+        <div style="margin-left:auto;display:flex;gap:5px;">
+          <button class="btn btn-gray" style="font-size:11px;" onclick="copyViewer()">📋 Copiar</button>
+          <button class="btn btn-gray" style="font-size:11px;" onclick="downloadViewer()">⬇ Baixar</button>
+          <button class="btn btn-blue" style="font-size:11px;" onclick="sendFileToAI()">🤖 Analisar com IA</button>
+        </div>
+      </div>
+      <textarea class="viewer" id="viewer-code" readonly spellcheck="false" placeholder="Selecione um arquivo na lista à esquerda..."></textarea>
+    </section>
+
+    <!-- ANÁLISE -->
+    <section id="sec-analysis" class="section">
+      <div class="ana-wrap">
+
+        <div class="card">
+          <div class="card-hdr"><h3>📊 Projeto</h3><span id="proj-type" style="font-size:12px;color:var(--mu);"></span></div>
+          <div class="card-body">
+            <div class="stats" id="stats"></div>
+            <div id="techs" style="margin-top:8px;"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr">
+            <h3>📦 Dependências (<span id="dep-count">0</span>)</h3>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <span id="npm-status" style="font-size:11px;color:var(--mu);"></span>
+              <button class="btn btn-blue" onclick="searchAllNpm()">🔍 Versões no npm</button>
+            </div>
+          </div>
+          <div class="card-body" id="deps-body"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr">
+            <h3>📋 package.json</h3>
+            <div style="display:flex;gap:5px;">
+              <button class="btn btn-gray" onclick="copyTA('pkg-ta')">📋</button>
+              <button class="btn btn-green" onclick="downloadTA('pkg-ta','package.json')">⬇</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <textarea class="code-out" id="pkg-ta" style="height:280px;"></textarea>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr">
+            <h3>💻 Comandos para recriar</h3>
+            <div style="display:flex;gap:5px;">
+              <button class="btn btn-gray" onclick="copyTA('cmds-ta')">📋</button>
+              <button class="btn btn-green" onclick="downloadTA('cmds-ta','recriar.bat')">⬇ .bat</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="cmds-sections"></div>
+            <textarea class="code-out" id="cmds-ta" style="height:320px;margin-top:10px;"></textarea>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr">
+            <h3>🌳 Estrutura completa</h3>
+            <button class="btn btn-gray" onclick="copyTA('tree-ta')">📋</button>
+          </div>
+          <div class="card-body">
+            <textarea class="code-out" id="tree-ta" style="height:400px;"></textarea>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CHAT IA -->
+    <section id="sec-chat" class="section">
+      <div class="chat-toolbar">
+        <select id="ai-provider" onchange="refreshModels()">
+          <option value="gemini">Gemini</option>
+          <option value="groq">Groq</option>
+          <option value="openai">OpenAI</option>
+        </select>
+        <select id="ai-model" style="min-width:160px;"></select>
+        <input type="password" id="ai-key" placeholder="Cole sua chave (AIza... / gsk_ / sk-...)" style="flex:1;background:#0a0e14;border:1px solid var(--bd);color:var(--tx);border-radius:5px;padding:4px 9px;font-size:12px;min-width:120px;">
+        <button class="btn btn-gray" onclick="saveKey()">💾</button>
+        <button class="btn btn-gray" onclick="clearChat()">🗑</button>
+        <span id="chat-status" style="font-size:11px;color:var(--mu);">Configure a chave acima</span>
+      </div>
+      <div id="chat-msgs"></div>
+      <div class="chat-inp">
+        <div class="chat-inp-row">
+          <textarea id="chat-input" rows="2" placeholder="Pergunte sobre o projeto... (Ctrl+Enter envia)"
+            onkeydown="if(event.ctrlKey&&event.key==='Enter'){sendChat();event.preventDefault();}"></textarea>
+          <button class="btn btn-blue" id="chat-send" onclick="sendChat()">▶</button>
+        </div>
+        <div style="font-size:11px;color:var(--mu);margin-top:3px;">Ctrl+Enter · O assistente tem acesso a todos os arquivos do projeto</div>
+      </div>
+    </section>
+
+  </div>
+</div>
+</div>
+
+<input type="file" id="zip-in" accept=".zip" style="display:none" onchange="loadZip(this)">
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  ESTADO
+// ═══════════════════════════════════════════════════
+const P = {
+  files: [],      // todos os arquivos {clean, ext, content, lines, size}
+  deps: {},
+  devDeps: {},
+  scripts: {},
+  name: 'meu-projeto',
+  techs: [],
+  type: '',
+};
+let currentFile = null;
+let chatMsgs = [];
+let chatBusy = false;
+
+// ═══════════════════════════════════════════════════
+//  NAV
+// ═══════════════════════════════════════════════════
+const TABS = ['drop','viewer','analysis','chat'];
+function goTab(name) {
+  TABS.forEach(t => {
+    document.getElementById('sec-'+t).classList.toggle('active', t===name);
+    document.getElementById('tb-'+t)?.classList.toggle('active', t===name);
+  });
+  if (name==='viewer'||name==='analysis') {
+    document.getElementById('file-panel').classList.remove('hidden');
+  } else {
+    document.getElementById('file-panel').classList.add('hidden');
+  }
+}
+function toggleFilePanel() {
+  document.getElementById('file-panel').classList.toggle('hidden');
+}
+
+// ═══════════════════════════════════════════════════
+//  IMPORTAR ZIP
+// ═══════════════════════════════════════════════════
+const drop = document.getElementById('drop');
+drop.addEventListener('dragover', e=>{e.preventDefault();drop.classList.add('over');});
+drop.addEventListener('dragleave', ()=>drop.classList.remove('over'));
+drop.addEventListener('drop', e=>{e.preventDefault();drop.classList.remove('over');if(e.dataTransfer.files[0])processZip(e.dataTransfer.files[0]);});
+
+async function loadZip(inp) { if(inp.files[0]) processZip(inp.files[0]); inp.value=''; }
+
+async function processZip(file) {
+  showToast('Carregando '+ file.name + '...');
+  const zip = await JSZip.loadAsync(file);
+  const TEXT = new Set(['html','htm','css','js','ts','tsx','jsx','mjs','cjs','json','md','txt','py','sh','bat','yaml','yml','env','toml','ini','svg','xml']);
+  const entries = [];
+
+  for (const [name, entry] of Object.entries(zip.files)) {
+    if (entry.dir) continue;
+    const ext = (name.split('.').pop()||'').toLowerCase();
+    let content = null;
+    if (TEXT.has(ext)) {
+      try { content = await entry.async('text'); } catch{}
+    }
+    entries.push({ path: name, ext, content,
+      size: content ? content.length : 0,
+      lines: content ? content.split('\n').length : 0 });
+  }
+
+  // Detectar e remover prefixo raiz
+  const root = (() => {
+    const paths = entries.map(e=>e.path);
+    if (!paths.length) return '';
+    const first = paths[0].split('/')[0];
+    return paths.every(p=>p.startsWith(first+'/')) ? first+'/' : '';
+  })();
+
+  P.files = entries
+    .map(e=>({...e, clean: root ? e.path.slice(root.length) : e.path}))
+    .filter(e=>e.clean && !e.clean.startsWith('node_modules') && !e.clean.startsWith('.git'));
+
+  // Ler package.json
+  const pkg = P.files.find(f=>f.clean==='package.json');
+  if (pkg?.content) {
+    try {
+      const d = JSON.parse(pkg.content);
+      P.name    = d.name || file.name.replace(/\.zip$/i,'');
+      P.deps    = d.dependencies    || {};
+      P.devDeps = d.devDependencies || {};
+      P.scripts = d.scripts         || {};
+    } catch{}
+  }
+
+  P.techs = detectTechs();
+  P.type  = detectType();
+
+  // Atualizar UI
+  document.getElementById('proj-badge').textContent = P.name + ' · ' + P.files.length + ' arquivos';
+  renderFileList();
+  renderAnalysis();
+  buildPkgJson();
+  buildCommands();
+  buildTree();
+
+  goTab('viewer');
+  showToast('✅ '+ P.files.length +' arquivos carregados');
+}
+
+// ═══════════════════════════════════════════════════
+//  LISTA DE ARQUIVOS (sem limite)
+// ═══════════════════════════════════════════════════
+function renderFileList() {
+  const list = document.getElementById('file-list');
+  const allFiles = P.files.sort((a,b)=>a.clean.localeCompare(b.clean));
+  list.innerHTML = allFiles.map(f => `
+    <div class="fi ${f.clean===currentFile?'active':''}" id="fi-${CSS.escape(f.clean)}" onclick="openFile('${esc(f.clean)}')">
+      <span>${fileIcon(f.ext)}</span>
+      <span class="fi-name" title="${esc(f.clean)}">${esc(f.clean)}</span>
+      ${f.content ? `<span class="fi-lines">${f.lines}</span>` : ''}
+    </div>`).join('');
+}
+
+function filterFiles() {
+  const q = document.getElementById('file-search').value.toLowerCase();
+  document.querySelectorAll('.fi').forEach(el => {
+    el.style.display = el.querySelector('.fi-name').textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  VIEWER — abre arquivo COMPLETO sem limite
+// ═══════════════════════════════════════════════════
+function openFile(clean) {
+  const f = P.files.find(x=>x.clean===clean);
+  if (!f) return;
+  currentFile = clean;
+
+  document.querySelectorAll('.fi').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('fi-' + CSS.escape(clean));
+  if (el) { el.classList.add('active'); el.scrollIntoView({block:'nearest'}); }
+
+  const ta = document.getElementById('viewer-code');
+  if (f.content !== null) {
+    ta.value = f.content;  // SEM truncar — arquivo completo
+  } else {
+    ta.value = '[Arquivo binário — não exibível como texto]';
+  }
+
+  document.getElementById('viewer-fname').textContent = clean;
+  document.getElementById('viewer-info').textContent =
+    f.content ? `${f.lines.toLocaleString()} linhas · ${(f.size/1024).toFixed(1)} KB · .${f.ext}` : '(binário)';
+
+  goTab('viewer');
+}
+
+function copyViewer() {
+  navigator.clipboard.writeText(document.getElementById('viewer-code').value).then(()=>showToast('📋 Copiado!'));
+}
+
+function downloadViewer() {
+  if (!currentFile) return;
+  const f = P.files.find(x=>x.clean===currentFile);
+  if (!f?.content) return;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([f.content],{type:'text/plain'}));
+  a.download=currentFile.split('/').pop(); a.click();
+}
+
+function sendFileToAI() {
+  if (!currentFile) return;
+  const f = P.files.find(x=>x.clean===currentFile);
+  if (!f?.content) return;
+  document.getElementById('chat-input').value = `Analise o arquivo ${currentFile}:\n\`\`\`\n${f.content.slice(0,8000)}\n\`\`\``;
+  goTab('chat');
+  document.getElementById('chat-input').focus();
+}
+
+// ═══════════════════════════════════════════════════
+//  ANÁLISE
+// ═══════════════════════════════════════════════════
+function renderAnalysis() {
+  // Stats
+  const textFiles = P.files.filter(f=>f.content);
+  const totalLines = textFiles.reduce((s,f)=>s+f.lines,0);
+  const byExt = {};
+  P.files.forEach(f=>byExt[f.ext]=(byExt[f.ext]||0)+1);
+  const topExts = Object.entries(byExt).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([e,n])=>`${e}:${n}`).join(' · ');
+
+  document.getElementById('stats').innerHTML = [
+    ['📁',P.files.length,'arquivos'],
+    ['📝',textFiles.length,'com texto'],
+    ['📏',totalLines.toLocaleString(),'linhas totais'],
+    ['📦',Object.keys(P.deps).length,'deps'],
+    ['🔧',Object.keys(P.devDeps).length,'devDeps'],
+  ].map(([i,n,l])=>`<div class="stat"><div class="n">${n}</div><div class="l">${i} ${l}</div></div>`).join('');
+
+  document.getElementById('proj-type').textContent = P.type;
+  document.getElementById('techs').innerHTML = P.techs.map(t=>`<span class="tag">${t}</span>`).join('');
+
+  // Deps — TODAS, sem slice
+  const allDeps = [
+    ...Object.entries(P.deps).map(([n,v])=>({n,v,type:'prod'})),
+    ...Object.entries(P.devDeps).map(([n,v])=>({n,v,type:'dev'})),
+  ];
+  document.getElementById('dep-count').textContent = allDeps.length;
+  document.getElementById('deps-body').innerHTML = allDeps.length
+    ? `<div>${allDeps.map(d=>`
+        <div class="dep-row">
+          <span class="dep-name">${esc(d.n)}</span>
+          <span class="dep-ver" id="dv-${CSS.escape(d.n)}">${esc(d.v)}</span>
+          <span class="dep-type" style="background:${d.type==='prod'?'#1f2a1f':'#1f1f2a'};color:${d.type==='prod'?'var(--gr)':'var(--bl)'}">${d.type}</span>
+          <span class="dep-desc" id="dd-${CSS.escape(d.n)}">—</span>
+        </div>`).join('')}</div>`
+    : '<p style="font-size:12px;color:var(--mu);">Nenhuma dependência encontrada.</p>';
+}
+
+// ═══════════════════════════════════════════════════
+//  BUSCAR VERSÕES NO NPM (sem limite)
+// ═══════════════════════════════════════════════════
+window.searchAllNpm = async () => {
+  const all = [...Object.keys(P.deps),...Object.keys(P.devDeps)];
+  const statusEl = document.getElementById('npm-status');
+  let done = 0;
+
+  for (let i=0;i<all.length;i+=6) {
+    const batch = all.slice(i,i+6);
+    await Promise.all(batch.map(async pkg=>{
+      try {
+        const r = await fetch(`https://registry.npmjs.org/${encodeURIComponent(pkg)}/latest`,
+          {signal:AbortSignal.timeout(6000)});
+        if (r.ok) {
+          const d = await r.json();
+          const ver = '^'+(d.version||'latest');
+          const desc = (d.description||'').slice(0,70);
+          const key = CSS.escape(pkg);
+          const ve = document.getElementById('dv-'+key);
+          const de = document.getElementById('dd-'+key);
+          if (ve) { ve.textContent=ver; ve.style.color='var(--gr)'; }
+          if (de) de.textContent = desc;
+          if (P.deps[pkg])    P.deps[pkg]    = ver;
+          if (P.devDeps[pkg]) P.devDeps[pkg] = ver;
+        }
+      } catch{}
+      done++;
+      statusEl.textContent = `${done}/${all.length}`;
+    }));
+  }
+  buildPkgJson();
+  statusEl.textContent = `✅ ${done} verificados`;
+  showToast('✅ Versões atualizadas!');
+};
+
+// ═══════════════════════════════════════════════════
+//  PACKAGE.JSON
+// ═══════════════════════════════════════════════════
+function buildPkgJson() {
+  const pkg = {
+    name: P.name.toLowerCase().replace(/[\s]+/g,'-'),
+    version: '1.0.0',
+    private: true,
+  };
+  if (Object.keys(P.scripts).length)  pkg.scripts         = P.scripts;
+  if (Object.keys(P.deps).length)     pkg.dependencies    = P.deps;
+  if (Object.keys(P.devDeps).length)  pkg.devDependencies = P.devDeps;
+  document.getElementById('pkg-ta').value = JSON.stringify(pkg,null,2);
+}
+
+// ═══════════════════════════════════════════════════
+//  COMANDOS (sem slice)
+// ═══════════════════════════════════════════════════
+function buildCommands() {
+  const t = P.techs;
+  const name = P.name.replace(/\s+/g,'-').toLowerCase();
+  const secs = [];
+
+  secs.push({title:'1. CRIAR PROJETO BASE', cmds: t.includes('Expo')
+    ? [`npx create-expo-app@latest ${name} --template blank-typescript`]
+    : t.includes('Next.js')
+    ? [`npx create-next-app@latest ${name} --typescript --tailwind --eslint --app`]
+    : (t.includes('React')&&t.includes('Vite'))
+    ? [`npm create vite@latest ${name} -- --template ${t.includes('TypeScript')?'react-ts':'react'}`,`cd ${name}`]
+    : [`mkdir ${name}`,`cd ${name}`,`npm init -y`]
+  });
+
+  const prod = Object.keys(P.deps).filter(d=>!['react','react-dom','next'].includes(d));
+  if (prod.length) secs.push({title:'2. DEPENDÊNCIAS PRINCIPAIS', cmds:[`npm install ${prod.join(' ')}`]});
+
+  const dev = Object.keys(P.devDeps).filter(d=>!['vite','typescript','@vitejs/plugin-react'].includes(d));
+  if (dev.length) secs.push({title:'3. DEV DEPENDENCIES', cmds:[`npm install -D ${dev.join(' ')}`]});
+
+  if (t.includes('Tailwind CSS')&&!t.includes('Next.js'))
+    secs.push({title:'4. TAILWIND CSS', cmds:['npm install -D tailwindcss postcss autoprefixer','npx tailwindcss init -p']});
+
+  if (t.includes('Electron'))
+    secs.push({title:'5. ELECTRON', cmds:['npm install -D electron electron-builder','rem Criar electron/main.js conforme original']});
+
+  if (t.includes('Drizzle ORM'))
+    secs.push({title:'6. DRIZZLE ORM', cmds:['npm install drizzle-orm @libsql/client','npm install -D drizzle-kit','rem Criar drizzle.config.ts e schema','npx drizzle-kit push']});
+
+  if (t.includes('Supabase'))
+    secs.push({title:'7. SUPABASE', cmds:['npm install @supabase/supabase-js','rem Criar .env com SUPABASE_URL e SUPABASE_KEY']});
+
+  // Todas as pastas sem limite
+  const dirs = new Set();
+  P.files.forEach(f=>{
+    const parts=f.clean.split('/');
+    for(let i=1;i<parts.length;i++) dirs.add(parts.slice(0,i).join('/'));
+  });
+  if (dirs.size) secs.push({title:'8. CRIAR PASTAS', cmds:[...[...dirs].sort().map(d=>`mkdir "${d.replace(/\//g,'\\')}" 2>nul`)]});
+
+  const devScript = Object.entries(P.scripts).find(([k])=>['dev','start','serve'].includes(k));
+  secs.push({title:'9. INSTALAR E RODAR',cmds:['npm install', devScript?`npm run ${devScript[0]}`:'npm run dev']});
+
+  // Renderizar visual
+  document.getElementById('cmds-sections').innerHTML = secs.map(s=>`
+    <div class="cmd-section">
+      <h4>${s.title}</h4>
+      ${s.cmds.map(c=>c.startsWith('rem ')||c.startsWith('(')?
+        `<div class="cmd-row comment"><code>${esc(c)}</code></div>`:
+        `<div class="cmd-row"><code>${esc(c)}</code><button class="cmd-copy" onclick="copy('${esc(c)}')">📋</button></div>`
+      ).join('')}
+    </div>`).join('');
+
+  // Texto para .bat
+  let bat = `@echo off\necho Replicando: ${P.name}\n\n`;
+  secs.forEach(s=>{
+    bat+=`rem === ${s.title} ===\n`;
+    s.cmds.forEach(c=>bat+=`${c}\n`);
+    bat+='\n';
+  });
+  bat+=`echo.\necho Projeto criado com sucesso!\npause`;
+  document.getElementById('cmds-ta').value = bat;
+}
+
+// ═══════════════════════════════════════════════════
+//  ÁRVORE COMPLETA (sem limite)
+// ═══════════════════════════════════════════════════
+function buildTree() {
+  const tree = {};
+  P.files.forEach(f=>{
+    const parts=f.clean.split('/');
+    let node=tree;
+    for(let i=0;i<parts.length-1;i++){
+      if(!node[parts[i]])node[parts[i]]={};
+      node=node[parts[i]];
+    }
+    node[parts[parts.length-1]]=f;
+  });
+
+  const lines=[];
+  function print(node,prefix=''){
+    const keys=Object.keys(node).sort((a,b)=>{
+      const ad=!node[a]?.path&&typeof node[a]==='object';
+      const bd=!node[b]?.path&&typeof node[b]==='object';
+      return (bd-ad)||a.localeCompare(b);
+    });
+    keys.forEach((k,i)=>{
+      const last=i===keys.length-1,c=last?'└─ ':'├─ ',child=node[k];
+      if(child?.path){
+        const info=child.content?` (${child.lines}L)`:'';
+        lines.push(`${prefix}${c}📄 ${k}${info}`);
+      } else {
+        lines.push(`${prefix}${c}📁 ${k}/`);
+        print(child,prefix+(last?'   ':'│  '));
+      }
+    });
+  }
+  print(tree);
+  document.getElementById('tree-ta').value = lines.join('\n'); // SEM limite
+}
+
+// ═══════════════════════════════════════════════════
+//  CHAT IA (com contexto do projeto)
+// ═══════════════════════════════════════════════════
+const MODELS = {
+  gemini:['gemini-2.0-flash','gemini-2.5-flash','gemini-1.5-pro'],
+  groq:['llama-3.3-70b-versatile','llama-3.1-8b-instant','mixtral-8x7b-32768'],
+  openai:['gpt-4o','gpt-4o-mini','gpt-3.5-turbo'],
+};
+
+function refreshModels(){
+  const p=document.getElementById('ai-provider').value;
+  document.getElementById('ai-model').innerHTML=MODELS[p].map(m=>`<option>${m}</option>`).join('');
+  const saved=localStorage.getItem('ai_key_'+p);
+  if(saved)document.getElementById('ai-key').placeholder='✅ Chave salva';
+  updateChatStatus();
+}
+refreshModels();
+
+function saveKey(){
+  const p=document.getElementById('ai-provider').value;
+  const k=document.getElementById('ai-key').value.trim();
+  if(!k)return;
+  localStorage.setItem('ai_key_'+p,k);
+  document.getElementById('ai-key').value='';
+  document.getElementById('ai-key').placeholder='✅ Salva';
+  updateChatStatus(); showToast('✅ Chave salva!');
+}
+
+function updateChatStatus(){
+  const p=document.getElementById('ai-provider').value;
+  const k=localStorage.getItem('ai_key_'+p);
+  document.getElementById('chat-status').textContent = k ? `${p} pronto` : 'Configure a chave acima';
+}
+
+function buildProjectContext(){
+  // Contexto: lista de arquivos + package.json + arquivo atual
+  let ctx = `PROJETO: ${P.name}\nTIPO: ${P.type}\nTECNOLOGIAS: ${P.techs.join(', ')}\n\n`;
+  ctx += `ARQUIVOS (${P.files.length} total):\n${P.files.map(f=>f.clean+(f.content?` (${f.lines}L)`:'')).join('\n')}\n\n`;
+  const pkg = P.files.find(f=>f.clean==='package.json');
+  if(pkg?.content) ctx += `PACKAGE.JSON:\n${pkg.content.slice(0,2000)}\n\n`;
+  if(currentFile){
+    const cf = P.files.find(f=>f.clean===currentFile);
+    if(cf?.content) ctx += `ARQUIVO ATUAL (${currentFile}):\n${cf.content.slice(0,6000)}\n`;
+  }
+  return ctx;
+}
+
+window.sendChat = async () => {
+  if(chatBusy) return;
+  const input=document.getElementById('chat-input');
+  const text=input.value.trim(); if(!text) return;
+  const provider=document.getElementById('ai-provider').value;
+  const key=localStorage.getItem('ai_key_'+provider);
+  if(!key){showToast('Configure a chave de IA','err');return;}
+  input.value='';
+
+  chatMsgs.push({role:'user',content:text});
+  addBubble('user',text);
+
+  chatBusy=true;
+  document.getElementById('chat-send').disabled=true;
+  document.getElementById('chat-send').textContent='…';
+
+  const think=addBubble('ai','<span class="dot-anim"><span></span><span></span><span></span></span>');
+
+  try {
+    const model=document.getElementById('ai-model').value;
+    const sysCtx=buildProjectContext();
+    const system={role:'system',content:`Você é um assistente especializado em análise de projetos de software.\n${sysCtx}`};
+    const msgs=[system,...chatMsgs.slice(-12)];
+
+    const bases={
+      gemini:'https://generativelanguage.googleapis.com/v1beta/openai',
+      groq:'https://api.groq.com/openai/v1',
+      openai:'https://api.openai.com/v1',
+    };
+    const r=await fetch(`${bases[provider]}/chat/completions`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},
+      body:JSON.stringify({model,messages:msgs,max_tokens:8192}),
+    });
+    const d=await r.json();
+    if(d.error) throw new Error(d.error.message||JSON.stringify(d.error));
+    const reply=d.choices?.[0]?.message?.content||'';
+    think.querySelector('.bubble').innerHTML=mdRender(reply);
+    chatMsgs.push({role:'assistant',content:reply});
+  } catch(e){
+    think.querySelector('.bubble').innerHTML=`<span style="color:var(--rd)">Erro: ${esc(e.message)}</span>`;
+  }
+
+  chatBusy=false;
+  document.getElementById('chat-send').disabled=false;
+  document.getElementById('chat-send').textContent='▶';
+  document.getElementById('chat-msgs').scrollTop=99999;
+};
+
+function addBubble(role,html){
+  const wrap=document.createElement('div');
+  const b=document.createElement('div');
+  b.className='bubble '+role;
+  b.innerHTML=html;
+  wrap.appendChild(b);
+  document.getElementById('chat-msgs').appendChild(wrap);
+  document.getElementById('chat-msgs').scrollTop=99999;
+  return wrap;
+}
+
+function clearChat(){chatMsgs=[];document.getElementById('chat-msgs').innerHTML='';}
+
+function mdRender(s){
+  return String(s)
+    .replace(/```([\s\S]*?)```/g,'<pre><code>$1</code></pre>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\n/g,'<br>');
+}
+
+// ═══════════════════════════════════════════════════
+//  DETECÇÃO
+// ═══════════════════════════════════════════════════
+function detectTechs(){
+  const paths=P.files.map(f=>f.clean.toLowerCase());
+  const all={...P.deps,...P.devDeps};
+  const t=[];
+  if(all['react']||paths.some(p=>p.endsWith('.tsx')||p.endsWith('.jsx'))) t.push('React');
+  if(all['react-native']||all['expo']) t.push('Expo/React Native');
+  if(all['next']||paths.some(p=>p.includes('next.config'))) t.push('Next.js');
+  if(all['vite']||paths.some(p=>p.includes('vite.config'))) t.push('Vite');
+  if(all['typescript']||paths.some(p=>p.endsWith('.ts')||p.endsWith('.tsx'))) t.push('TypeScript');
+  if(all['tailwindcss']) t.push('Tailwind CSS');
+  if(all['electron']||paths.some(p=>p.startsWith('electron/'))) t.push('Electron');
+  if(all['express']) t.push('Express');
+  if(all['drizzle-orm']) t.push('Drizzle ORM');
+  if(all['@supabase/supabase-js']||paths.some(p=>p.includes('supabase'))) t.push('Supabase');
+  if(all['better-sqlite3']||all['@libsql/client']) t.push('SQLite');
+  if(all['@webcontainer/api']) t.push('WebContainer');
+  if(paths.some(p=>p.endsWith('.py'))) t.push('Python');
+  return [...new Set(t)];
+}
+
+function detectType(){
+  const t=P.techs;
+  if(t.includes('Expo/React Native')) return 'Mobile — Expo/React Native';
+  if(t.includes('Electron')) return 'Desktop — Electron';
+  if(t.includes('Next.js')) return 'Web Full-Stack — Next.js';
+  if(t.includes('Express')&&t.includes('React')) return 'Web Full-Stack — React + Express';
+  if(t.includes('React')) return 'Web Frontend — React/Vite';
+  if(t.includes('Express')) return 'Backend — Node.js/Express';
+  return 'Projeto Web';
+}
+
+// ═══════════════════════════════════════════════════
+//  UTILITÁRIOS
+// ═══════════════════════════════════════════════════
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fileIcon=ext=>({html:'🌐',css:'🎨',js:'📜',ts:'📘',jsx:'⚛',tsx:'⚛',json:'📋',md:'📝',py:'🐍',txt:'📄',svg:'🖼',sh:'⚙',bat:'⚙'}[ext]||'📄');
+
+function copy(txt){ navigator.clipboard.writeText(txt).then(()=>showToast('📋')); }
+function copyTA(id){ copy(document.getElementById(id).value); showToast('📋 Copiado!'); }
+function downloadTA(id,fname){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([document.getElementById(id).value],{type:'text/plain'}));
+  a.download=fname; a.click();
+}
+
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.background=type==='err'?'var(--rd)':'var(--gr)';
+  t.style.display='block'; clearTimeout(t._t); t._t=setTimeout(()=>t.style.display='none',2500);
+}
+</script>
+</body>
+</html>
